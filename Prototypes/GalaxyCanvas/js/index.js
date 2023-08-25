@@ -15,6 +15,12 @@ document.body.appendChild(app.view);
 
 window.addEventListener("resize", resize);
 
+const fpsElement = document.getElementById('fpsCounter');
+
+app.ticker.add(() => {
+  fpsElement.textContent = `FPS: ${Math.round(app.ticker.FPS)}`;
+});
+
 function resize() {
   app.renderer.resize(window.innerWidth, window.innerHeight);
   // Adjust the stage's position

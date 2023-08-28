@@ -15,6 +15,19 @@ export class Repository {
     }
   }
 
+  async get(key) {
+    await this.#ensureDatabaseInitialized();
+
+    const transaction = this.#db.transaction([this.objectStoreName], "readonly");
+    const store = transaction.objectStore(this.objectStoreName);
+
+    return new Promise((resolve, reject) => {
+      const request = store.get(key);
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = (e) => reject(e.target.error);
+    });
+  }
+
   async save(entity) {
     await this.#ensureDatabaseInitialized();
     const transaction = this.#db.transaction([this.objectStoreName], "readwrite");

@@ -4,7 +4,7 @@ import { visibleInInspector } from "../decorators";
 export default class MyScript extends ArcRotateCamera {
     @visibleInInspector("number", "lowerBetaLimit", 0.1, { min: -Math.PI, max: Math.PI })
     lowerBetaLimit: number;
-    @visibleInInspector("number", "upperBetaLimit", Tools.ToRadians(30), { min: -Math.PI, max: Math.PI })
+    @visibleInInspector("number", "upperBetaLimit", Tools.ToRadians(60), { min: -Math.PI, max: Math.PI })
     upperBetaLimit: number;
 
     /**
@@ -19,7 +19,7 @@ export default class MyScript extends ArcRotateCamera {
      * This function is called immediatly after the constructor has been called.
      */
     public onInitialize(): void {
-
+      this.inputs.removeByType("ArcRotateCameraKeyboardMoveInput");
     }
 
     /**

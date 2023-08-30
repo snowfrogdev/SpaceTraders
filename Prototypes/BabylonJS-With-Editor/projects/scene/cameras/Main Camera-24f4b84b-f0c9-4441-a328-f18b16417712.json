@@ -1,0 +1,128 @@
+{
+	"tags": null,
+	"alpha": 0,
+	"beta": 0.01,
+	"radius": 10,
+	"target": [
+		0,
+		0,
+		0
+	],
+	"inertialAlphaOffset": 0,
+	"inertialBetaOffset": 0,
+	"inertialRadiusOffset": 0,
+	"lowerBetaLimit": 0.01,
+	"upperBetaLimit": 3.1315926535897933,
+	"inertialPanningX": 0,
+	"inertialPanningY": 0,
+	"pinchToPanMaxDistance": 20,
+	"panningOriginTarget": [
+		0,
+		0,
+		0
+	],
+	"panningInertia": 0.9,
+	"zoomToMouseLocation": false,
+	"zoomOnFactor": 1,
+	"targetScreenOffset": [
+		0,
+		0
+	],
+	"allowUpsideDown": true,
+	"useInputToRestoreState": true,
+	"rotation": [
+		0,
+		0,
+		0
+	],
+	"speed": 2,
+	"position": [
+		0.09999833334166665,
+		9.999500004166652,
+		0
+	],
+	"upVector": [
+		0,
+		1,
+		0
+	],
+	"fov": 0.8,
+	"projectionPlaneTilt": 0,
+	"minZ": 1,
+	"maxZ": 10000,
+	"inertia": 0.9,
+	"mode": 0,
+	"layerMask": 268435455,
+	"fovMode": 0,
+	"cameraRigMode": 0,
+	"name": "Main Camera",
+	"id": "24f4b84b-f0c9-4441-a328-f18b16417712",
+	"state": "",
+	"metadata": {
+		"script": {
+			"name": "src/scenes/scene/camera.ts",
+			"properties": {
+				"lowerBetaLimit": {
+					"type": "number",
+					"value": 0.1
+				},
+				"upperBetaLimit": {
+					"type": "number",
+					"value": 1.16
+				}
+			}
+		}
+	},
+	"uniqueId": 128,
+	"type": "ArcRotateCamera",
+	"inputsmgr": {
+		"ArcRotateCameraKeyboardMoveInput": {
+			"tags": null,
+			"keysUp": [
+				38
+			],
+			"keysDown": [
+				40
+			],
+			"keysLeft": [
+				37
+			],
+			"keysRight": [
+				39
+			],
+			"keysReset": [
+				220
+			],
+			"panningSensibility": 50,
+			"zoomingSensibility": 25,
+			"useAltToZoom": true,
+			"angularSpeed": 0.01
+		},
+		"ArcRotateCameraMouseWheelInput": {
+			"tags": null,
+			"wheelPrecision": 3,
+			"zoomToMouseLocation": false,
+			"wheelDeltaPercentage": 0
+		},
+		"ArcRotateCameraPointersInput": {
+			"tags": null,
+			"buttons": [
+				0,
+				1,
+				2
+			],
+			"angularSensibilityX": 1000,
+			"angularSensibilityY": 1000,
+			"pinchPrecision": 12,
+			"pinchDeltaPercentage": 0,
+			"useNaturalPinchZoom": false,
+			"pinchZoom": true,
+			"panningSensibility": 1000,
+			"multiTouchPanning": true,
+			"multiTouchPanAndZoom": true
+		}
+	},
+	"animations": [],
+	"ranges": [],
+	"isEnabled": true
+}

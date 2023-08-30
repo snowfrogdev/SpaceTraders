@@ -24,6 +24,7 @@
 		1,
 		0
 	],
+	"dithering": false,
 	"id": "b2346078-7465-4c63-8877-44b542584898",
 	"name": "sky",
 	"metadata": {

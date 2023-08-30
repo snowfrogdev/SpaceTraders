@@ -6,20 +6,15 @@
 	"firstLoad": false,
 	"watchProject": true,
 	"physicsEngine": "cannon",
-	"pluginsPreferences": {
-		"dior": {
-			"grass": {
-				"grassOffset": 1,
-				"width": 10,
-				"height": 10,
-				"randomScaling": 0
-			}
-		}
-	},
+	"pluginsPreferences": {},
 	"packageManager": "npm",
 	"outputSceneDirectory": "",
 	"https": {
 		"enabled": false
+	},
+	"autoLod": {
+		"enabled": false,
+		"autoApply": true
 	},
 	"basisCompressedTextures": {
 		"enabled": false

@@ -6,23 +6,17 @@
 	"materials": [
 		{
 			"isMultiMaterial": false,
-			"bindedMeshes": [
-				"eee4645a-645f-4faf-b10b-868d396f01f0"
-			],
+			"bindedMeshes": [],
 			"json": "materials/ground.material"
 		},
 		{
 			"isMultiMaterial": false,
-			"bindedMeshes": [
-				"6a927ea7-51d9-4248-9b80-4d34b53b386e"
-			],
+			"bindedMeshes": [],
 			"json": "materials/sky.material"
 		},
 		{
 			"isMultiMaterial": false,
-			"bindedMeshes": [
-				"e22f3d3a-65b2-4993-8c52-cb05d2af8278"
-			],
+			"bindedMeshes": [],
 			"json": "materials/cube.material"
 		}
 	],
@@ -108,7 +102,7 @@
 		"postProcessesEnabled": true,
 		"metadata": {
 			"script": {
-				"name": "None"
+				"name": "src/scenes/scene/load-systems.ts"
 			},
 			"postProcesses": {
 				"ssao": {
@@ -268,7 +262,6 @@
 			}
 		},
 		"environmentIntensity": 1,
-		"shadowGenerators": [],
 		"sounds": []
 	},
 	"assets": {

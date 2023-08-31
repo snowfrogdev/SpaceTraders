@@ -1,5 +1,7 @@
 import ky, { HTTPError } from "ky";
-import { consumeToken, increaseRefillInterval, decreaseRefillInterval } from "./token-bucket.js";
+import { consumeToken, increaseRefillInterval, decreaseRefillInterval } from "./token-bucket";
+import { ListDto } from "../dtos/list.dto";
+import { SystemDto } from "../dtos/system.dto";
 
 const BASE_URL = "https://api.spacetraders.io/v2/";
 const AUTH_TOKEN =
@@ -23,6 +25,9 @@ const api = ky.create({
           await new Promise((resolve) => setTimeout(resolve, 300));
         }
       },
+      async () => {
+        totalRequests++;
+      },
     ],
     beforeRetry: [
       async ({ request, options, error, retryCount }) => {
@@ -33,6 +38,7 @@ const api = ky.create({
         while (!consumeToken()) {
           await new Promise((resolve) => setTimeout(resolve, 300));
         }
+        totalRequests++;
       },
     ],
     afterResponse: [
@@ -40,9 +46,6 @@ const api = ky.create({
         if (response.status !== 429) {
           decreaseRefillInterval();
         }
-
-        // RPM calculation
-        totalRequests++;
 
         const elapsedMinutes = (Date.now() - sessionStartTimestamp) / 60000; // convert to minutes
         const averageRPM = totalRequests / elapsedMinutes;
@@ -60,7 +63,7 @@ export async function* fetchAllSystems() {
 
   // Fetch the first page to get the total count
   const firstPageResponse = await api.get(`systems?page=1&limit=${pageLimit}`);
-  const firstPageBody = await firstPageResponse.json();
+  const firstPageBody = await firstPageResponse.json<ListDto<SystemDto>>();
   yield firstPageBody.data;
 
   const totalSystems = firstPageBody.meta.total;
@@ -69,7 +72,7 @@ export async function* fetchAllSystems() {
   // Start from the second page since we've already fetched the first page
   for (let currentPage = 2; currentPage <= totalPages; currentPage++) {
     const pageResponse = await api.get(`systems?page=${currentPage}&limit=${pageLimit}`);
-    const pageBody = await pageResponse.json();
+    const pageBody = await pageResponse.json<ListDto<SystemDto>>();
     yield pageBody.data;
   }
 }

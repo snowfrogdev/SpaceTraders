@@ -131,6 +131,7 @@ async function renderSystems() {
 const systemInfoManager = new SystemInfoManager(renderer.domElement, camera, scene, systemsRepo);
 
 
+
 /** Distance widget **/
 const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // x,z plane
 

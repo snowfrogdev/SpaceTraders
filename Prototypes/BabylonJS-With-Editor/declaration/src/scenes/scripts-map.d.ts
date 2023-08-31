@@ -4,6 +4,7 @@ import { ScriptMap } from "./tools";
  */
 export interface ISceneScriptMap {
     "src/scenes/scene/camera.ts": ScriptMap;
+    "src/scenes/scene/load-systems.ts": ScriptMap;
 }
 /**
  * Defines the map of all available scripts in the project.

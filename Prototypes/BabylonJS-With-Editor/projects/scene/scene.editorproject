@@ -6,34 +6,42 @@
 	"materials": [
 		{
 			"isMultiMaterial": false,
-			"bindedMeshes": [],
-			"json": "materials/ground.material"
+			"bindedMeshes": [
+				"d67d9bd2-f6fc-41f4-a576-047bc9207f78"
+			],
+			"json": "materials/star.material"
 		},
 		{
 			"isMultiMaterial": false,
-			"bindedMeshes": [],
-			"json": "materials/sky.material"
-		},
-		{
-			"isMultiMaterial": false,
-			"bindedMeshes": [],
+			"bindedMeshes": [
+				"2d20d375-bcf3-4427-8470-a2b93113a0f1"
+			],
 			"json": "materials/cube.material"
 		}
 	],
 	"textures": [],
-	"meshes": [],
-	"transformNodes": [],
+	"meshes": [
+		"Star-d67d9bd2-f6fc-41f4-a576-047bc9207f78.json",
+		"Star-b43bccd6-6302-4856-92f6-995147bdc7b4.json"
+	],
+	"transformNodes": [
+		"StarSystems-35f9fc62-db03-4a2b-8caa-2e1e098fdd4a.json"
+	],
 	"particleSystems": [],
-	"lights": [],
+	"lights": [
+		{
+			"json": "Stat Point Light-d86b4876-cd52-441d-8f82-d0f333358508.json"
+		}
+	],
 	"sounds": [],
 	"morphTargetManagers": [],
 	"reflectionProbes": [],
 	"scene": {
 		"autoClear": true,
 		"clearColor": [
-			0.2,
-			0.2,
-			0.3,
+			0,
+			0,
+			0,
 			1
 		],
 		"ambientColor": [
@@ -46,8 +54,8 @@
 			-9.807,
 			0
 		],
-		"collisionsEnabled": true,
-		"fogEnabled": true,
+		"collisionsEnabled": false,
+		"fogEnabled": false,
 		"physicsEnabled": true,
 		"physicsGravity": [
 			0,
@@ -78,6 +86,7 @@
 			"_colorGradingBGR": true,
 			"_exposure": 1,
 			"_toneMappingEnabled": false,
+			"_toneMappingType": 3,
 			"_contrast": 1,
 			"vignetteStretch": 0,
 			"vignetteCenterX": 0,
@@ -182,6 +191,7 @@
 							"contrast": 1,
 							"fromLinearSpace": true,
 							"toneMappingEnabled": false,
+							"toneMappingType": 3,
 							"colorCurvesEnabled": false,
 							"colorCurves": {
 								"tags": null,
@@ -208,7 +218,7 @@
 							"bloomThreshold": 0.9
 						},
 						"sharpen": {
-							"enabled": true,
+							"enabled": false,
 							"edgeAmount": 0.3,
 							"colorAmount": 1
 						},
@@ -238,7 +248,9 @@
 							"intensity": 30
 						},
 						"glowLayer": {
-							"enabled": false
+							"enabled": true,
+							"intensity": 1,
+							"blurKernelSize": 32
 						},
 						"vignette": {
 							"enabled": false,
@@ -262,7 +274,37 @@
 			}
 		},
 		"environmentIntensity": 1,
-		"sounds": []
+		"sounds": [],
+		"effectLayers": [
+			{
+				"tags": null,
+				"blurKernelSize": 32,
+				"intensity": 1,
+				"options": {
+					"mainTextureRatio": 0.5,
+					"blurKernelSize": 32,
+					"camera": null,
+					"mainTextureSamples": 1,
+					"renderingGroupId": -1,
+					"ldrMerge": false,
+					"alphaBlendingMode": 1,
+					"mainTextureType": 0
+				},
+				"name": "",
+				"neutralColor": [
+					0,
+					0,
+					0,
+					1
+				],
+				"isEnabled": true,
+				"renderingGroupId": -1,
+				"disableBoundingBoxesFromEffectLayer": false,
+				"customType": "BABYLON.GlowLayer",
+				"includedMeshes": [],
+				"excludedMeshes": []
+			}
+		]
 	},
 	"assets": {
 		"meshes": [],
@@ -286,15 +328,15 @@
 			"checkCollisions": false,
 			"applyGravity": false,
 			"rotation": [
-				-0.6499835012490189,
-				-0.7195458984458355,
+				0.17519783347773848,
+				-1.6661706462310426,
 				0
 			],
 			"speed": 2,
 			"position": [
-				476.2307928351645,
-				97.23480741910748,
-				-376.7286260546213
+				9687.558286929856,
+				1722.6492756873226,
+				926.7559888538586
 			],
 			"upVector": [
 				0,
@@ -304,7 +346,7 @@
 			"fov": 0.8,
 			"projectionPlaneTilt": 0,
 			"minZ": 1,
-			"maxZ": 10000,
+			"maxZ": 1946195.068359375,
 			"inertia": 0.5,
 			"mode": 0,
 			"layerMask": 268435455,
@@ -450,6 +492,7 @@
 					"contrast": 1,
 					"fromLinearSpace": true,
 					"toneMappingEnabled": false,
+					"toneMappingType": 3,
 					"colorCurvesEnabled": false,
 					"colorCurves": {
 						"tags": null,
@@ -476,7 +519,7 @@
 					"bloomThreshold": 0.9
 				},
 				"sharpen": {
-					"enabled": true,
+					"enabled": false,
 					"edgeAmount": 0.3,
 					"colorAmount": 1
 				},
@@ -506,7 +549,9 @@
 					"intensity": 30
 				},
 				"glowLayer": {
-					"enabled": false
+					"enabled": true,
+					"intensity": 1,
+					"blurKernelSize": 32
 				},
 				"vignette": {
 					"enabled": false,
@@ -528,5 +573,5 @@
 			"enabled": false
 		}
 	},
-	"physicsEnabled": true
+	"physicsEnabled": false
 }

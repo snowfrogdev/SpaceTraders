@@ -21,7 +21,9 @@
 	},
 	"ktx2CompressedTextures": {
 		"enabled": false,
-		"pvrTexToolCliPath": "",
+		"pvrTexToolCliPath": {
+			"win32": ""
+		},
 		"nvidiaTextureToolsLink": {},
 		"forcedFormat": "automatic",
 		"enabledInPreview": false,

@@ -1,12 +1,12 @@
 {
 	"tags": null,
-	"alpha": 0,
-	"beta": 0.010000000000001442,
-	"radius": 10,
+	"alpha": 8.063067370411137,
+	"beta": 1.614595717125017,
+	"radius": 3305.0003543862954,
 	"target": [
-		0,
-		0,
-		0
+		-0.1338042237522665,
+		-0.4613621601355928,
+		0.11233011788152784
 	],
 	"inertialAlphaOffset": 0,
 	"inertialBetaOffset": 0,
@@ -37,9 +37,9 @@
 	],
 	"speed": 2,
 	"position": [
-		0.09999833334168107,
-		9.999500004166652,
-		0
+		-685.4803951276028,
+		-145.17208384748784,
+		3230.0327935130304
 	],
 	"upVector": [
 		0,
@@ -49,7 +49,7 @@
 	"fov": 0.8,
 	"projectionPlaneTilt": 0,
 	"minZ": 1,
-	"maxZ": 10000,
+	"maxZ": 1946195.068359375,
 	"inertia": 0.9,
 	"mode": 0,
 	"layerMask": 268435455,
@@ -100,7 +100,7 @@
 		},
 		"ArcRotateCameraMouseWheelInput": {
 			"tags": null,
-			"wheelPrecision": 3,
+			"wheelPrecision": 0.01,
 			"zoomToMouseLocation": false,
 			"wheelDeltaPercentage": 0
 		},

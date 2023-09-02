@@ -1,0 +1,46 @@
+{
+	"tags": null,
+	"shadowAngle": 1.5707963267948966,
+	"diffuse": [
+		1,
+		0.8073131776948703,
+		0.33644859813084116
+	],
+	"specular": [
+		1,
+		1,
+		1
+	],
+	"falloffType": 0,
+	"intensity": 1,
+	"range": 1.7976931348623157e+308,
+	"intensityMode": 0,
+	"radius": 0.00001,
+	"_renderPriority": 0,
+	"shadowEnabled": true,
+	"excludeWithLayerMask": 0,
+	"includeOnlyWithLayerMask": 0,
+	"lightmapMode": 0,
+	"position": [
+		0,
+		0,
+		0
+	],
+	"name": "Stat Point Light",
+	"id": "d86b4876-cd52-441d-8f82-d0f333358508",
+	"state": "",
+	"metadata": {
+		"script": {
+			"name": "None"
+		}
+	},
+	"uniqueId": 410,
+	"type": 0,
+	"excludedMeshesIds": [
+		"d67d9bd2-f6fc-41f4-a576-047bc9207f78"
+	],
+	"animations": [],
+	"ranges": [],
+	"isEnabled": true,
+	"parentId": null
+}

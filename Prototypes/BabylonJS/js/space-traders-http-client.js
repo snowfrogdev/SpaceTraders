@@ -3,13 +3,13 @@ import { consumeToken, increaseRefillInterval, decreaseRefillInterval } from "./
 
 const BASE_URL = "https://api.spacetraders.io/v2/";
 const AUTH_TOKEN =
-  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiQkFXSVRBQkEiLCJ2ZXJzaW9uIjoidjIiLCJyZXNldF9kYXRlIjoiMjAyMy0wOC0yNiIsImlhdCI6MTY5MzE4MTY3Nywic3ViIjoiYWdlbnQtdG9rZW4ifQ.cp5ZmE3EQCQsi-sJ7e-MMzpWxOAWItGixG8ZumjgdmS-ihhPyTzc8fG4mFaTXmRA93jp4nI-XYcFBjuT4Q4A3FIXPzVyPbSoxUUvCCOeVjdT_e2bIGOPKsqnMbpl5vWQmGRkZAyxyDiHCX7IXamhBgBqXy-vIUb6tRjX8V5Rbbc-FQGBcCAip9XuSSCSG3vUgdHHrRzWcukTAaT-1oXKEu4pGWxNO-U_HG8rHD4cJGC62R_Q738tj2CqRpQHUB12I-NatdlAluQnxjIPnJ6zvntg0oQbUhgWSnBCqMXuAhXs5fNoAI5l38vBZUhbvMsSgOcFKS-SMSUt7A2WwoCw2w";
+  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiRkFSVF9NT05LRVkiLCJ2ZXJzaW9uIjoidjIiLCJyZXNldF9kYXRlIjoiMjAyMy0wOS0wMiIsImlhdCI6MTY5MzcwMjY0Niwic3ViIjoiYWdlbnQtdG9rZW4ifQ.Wr5kI-Mc6brZPtNNp2SqnSTgB0l0sZTdsND4TW3jhCgW7wIrj_asKjF8wQ54S2QB-RChJ4l3z_gooBVxrSAUT8U4BbmlR84RAzLD-Pdp1zaQiFKhM8-kOoq36z8hJWry0IQD6Pfaj3ofZaFX-J47IkrVrl9jRRUuJGNDBp8fGWnfSFPeAxwOrNYiVlUbzb5lOjUa9XXU1C9wu927FGB9TBqyez5oU9LdJvjtcm6xX2ra5cExOQ0j-cZLD5MyqsH2FvFuVqmSC70GJPllQ6MinvGuz9KwGW-zwwZxFcw3YD-V8ya6If4KQaTbbpVwl6Xxun5JKapGF3yXJ31Y-uc1xA";
 
 // RPM stats
 let totalRequests = 0;
 const sessionStartTimestamp = Date.now();
 
-const api = ky.create({
+export const httpClient = ky.create({
   prefixUrl: BASE_URL,
   headers: {
     Authorization: `Bearer ${AUTH_TOKEN}`,
@@ -55,28 +55,3 @@ const api = ky.create({
     ],
   },
 });
-
-export async function* fetchAllSystems() {
-  const pageLimit = 20;
-
-  // Fetch the first page to get the total count
-  const firstPageResponse = await api.get(`systems?page=1&limit=${pageLimit}`);
-  const firstPageBody = await firstPageResponse.json();
-  yield firstPageBody.data;
-
-  const totalSystems = firstPageBody.meta.total;
-  const totalPages = Math.ceil(totalSystems / pageLimit);
-
-  // Start from the second page since we've already fetched the first page
-  for (let currentPage = 2; currentPage <= totalPages; currentPage++) {
-    const pageResponse = await api.get(`systems?page=${currentPage}&limit=${pageLimit}`);
-    const pageBody = await pageResponse.json();
-    yield pageBody.data;
-  }
-}
-
-export async function speedTest() {
-  setInterval(async () => {
-    api.get(`systems?page=1&limit=20`);
-  }, 300);
-}

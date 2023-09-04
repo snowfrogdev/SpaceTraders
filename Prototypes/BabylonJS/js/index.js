@@ -1,5 +1,5 @@
 import { Repository } from "./repository.js";
-import { fetchAllSystems } from "./space-traders-http-client.js";
+import { fetchAllSystems, fetchAllMyShips, fetchAllWaypointsInSystem } from "./space-traders-api.js";
 import { ZCalculator } from "./star-z-calculator.js";
 
 const canvas = document.getElementById("renderCanvas"); // Get the canvas element
@@ -20,46 +20,98 @@ for await (const system of systemRepo.list()) {
   systems.push(system);
 }
 
-let starMesh;
+const myShips = [];
+for await (const ships of fetchAllMyShips()) {
+  for (const ship of ships) {
+    myShips.push(ship);
+  }
+}
+
+const system = await systemRepo.get(myShips[0].nav.systemSymbol);
+
+const systemWaypoints = [];
+for await (const waypoints of fetchAllWaypointsInSystem(myShips[0].nav.systemSymbol)) {
+  for (const waypoint of waypoints) {
+    systemWaypoints.push(waypoint);
+  }
+}
+
+const rotatingMeshes = [];
 
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
   scene.clearColor = BABYLON.Color3.Black();
   scene.debugLayer.show({ embedMode: true, overlay: true });
-  const camera = new BABYLON.ArcRotateCamera("Main Camera", 0, 0, 150000, new BABYLON.Vector3(0, 0, 0), scene);
+  const camera = new BABYLON.ArcRotateCamera("Main Camera", 0, 0, 0, new BABYLON.Vector3(0, 0, 0), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
   camera.wheelDeltaPercentage = 0.01;
   camera.maxZ = 300000;
   camera.attachControl(canvas, true);
 
-  starMesh = new BABYLON.MeshBuilder.CreateSphere("Star", { size: 2, segments: 16 }, scene);
-  const myMaterial = new BABYLON.StandardMaterial("Star", scene);
-  myMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_sun.jpg", scene);
-  myMaterial.disableLighting = true;
-  starMesh.material = myMaterial;
-  starMesh.isVisible = false;
-
-  const gl = new BABYLON.GlowLayer("Glow Layer", scene);
-  gl.intensity = 0.15;
-
-  const hl = new BABYLON.HighlightLayer("Highlight Layer", scene);
-  hl.innerGlow = true;
-  hl.outerGlow = true;
-  hl.blurHorizontalSize = 2;
-  hl.blurVerticalSize = 2;
+  /** STAR **/
+  const starMesh = new BABYLON.MeshBuilder.CreateSphere("Star", { size: 1, segments: 16 }, scene);
+  const starMaterial = await BABYLON.NodeMaterial.ParseFromSnippetAsync("SGX0YM#1", scene);
+  starMesh.material = starMaterial;
+  starMesh.scaling = new BABYLON.Vector3(5, 5, 5);
+  rotatingMeshes.push(starMesh);
 
   const zCalculator = new ZCalculator(7000, 7000, 0);
-  for (const system of systems) {
-    const starMeshInstance = starMesh.createInstance(`star-${system.symbol}`);
-    starMeshInstance.scaling = new BABYLON.Vector3(1, 1, 1);
 
-    const z = zCalculator.getZ(system.x, system.y);
-    starMeshInstance.position = new BABYLON.Vector3(system.x, z, system.y);
+  const y = zCalculator.getZ(system.x, system.y);
+  starMesh.position = new BABYLON.Vector3(system.x, y, system.y);
+  // set camera close to star and aim it to look at star
+  camera.setPosition(new BABYLON.Vector3(system.x, y + 50, system.y - 150));
+  camera.setTarget(starMesh.position.clone());
+
+  /** WAYPOINTS **/
+  for (const waypoint of systemWaypoints) {
+    const waypointOrbit = new BABYLON.TransformNode(`Waypoint Orbit ${waypoint.symbol}-${waypoint.type}`, scene);
+    const waypointMesh = new BABYLON.MeshBuilder.CreateSphere(
+      `Waypoint ${waypoint.symbol}-${waypoint.type}`,
+      { size: 1, segments: 16 },
+      scene
+    );
+    const waypointMaterial = new BABYLON.StandardMaterial(`Waypoint ${waypoint.symbol}-${waypoint.type}`, scene);
+    waypointMesh.material = waypointMaterial;
+    waypointMesh.parent = waypointOrbit;
+
+    if (waypoint.type === "MOON" || waypoint.type === "ORBITAL_STATION") {
+      waypointOrbit.position = new BABYLON.Vector3(system.x + waypoint.x, starMesh.position.y, system.y + waypoint.y);
+      waypointMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_moon.jpg", scene);
+      waypointMesh.position = new BABYLON.Vector3(
+        randomBetweenWithExclusion(-5, 5, -1, 1),
+        0,
+        randomBetweenWithExclusion(-5, 5, -1, 1)
+      );
+      const size = randomBetween(0.5, 1.25);
+      waypointMesh.scaling = new BABYLON.Vector3(size, size, size);
+    } else {
+      waypointOrbit.position = starMesh.position.clone();
+      waypointMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_neptune.jpg", scene);
+
+      waypointMesh.position = new BABYLON.Vector3(waypoint.x, 0, waypoint.y);
+      const size = randomBetween(1.5, 4);
+      waypointMesh.scaling = new BABYLON.Vector3(size, size, size);
+    }
+
+    rotatingMeshes.push(waypointMesh);
+
+    // Orbit line
+    const radius = Math.sqrt(
+      waypointMesh.position.x * waypointMesh.position.x + waypointMesh.position.z * waypointMesh.position.z
+    );
+    const points = [];
+    const numPoints = 100;
+
+    for (let i = 0; i < numPoints; i++) {
+      const angle = (i * 2 * Math.PI) / numPoints;
+      points.push(new BABYLON.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
+    }
+    points.push(points[0]);
+
+    const orbitLine = BABYLON.MeshBuilder.CreateLines("Orbit Line", { points: points }, scene);
+    orbitLine.parent = waypointOrbit;
   }
-
-  hl.addMesh(starMesh, BABYLON.Color3.Yellow());
-  gl.addIncludedOnlyMesh(starMesh);
-  gl.referenceMeshToUseItsOwnMaterial(starMesh);
 
   return scene;
 };
@@ -70,12 +122,40 @@ const scene = await createScene(); //Call the createScene function
 engine.runRenderLoop(function () {
   const deltaTime = scene.getEngine().getDeltaTime() / 1000; // Convert to seconds
 
-  const rotationSpeed = 0.2; // rotations per second
-  starMesh.rotation.y += rotationSpeed * deltaTime; // Rotate around Y-axis using delta time
-
+  const rotationSpeed = 0.1; // rotations per second
+  for (const mesh of rotatingMeshes) {
+    mesh.rotation.y += rotationSpeed * deltaTime; // Rotate around Y-axis using delta time
+  }
   scene.render();
 });
 // Watch for browser/canvas resize events
 window.addEventListener("resize", function () {
   engine.resize();
 });
+
+function randomBetween(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function randomBetweenWithExclusion(min, max, exclusionMin, exclusionMax) {
+  if (exclusionMin >= exclusionMax) {
+    throw new Error("Invalid exclusion range");
+  }
+
+  const range = max - min;
+  const exclusionRange = exclusionMax - exclusionMin;
+
+  // If the exclusion range is outside of the main range, just return a simple random number
+  if (exclusionMax <= min || exclusionMin >= max) {
+    return Math.random() * range + min;
+  }
+
+  const adjustedMax = max - exclusionRange;
+  let result = Math.random() * (adjustedMax - min) + min;
+
+  if (result >= exclusionMin) {
+    result += exclusionRange;
+  }
+
+  return result;
+}

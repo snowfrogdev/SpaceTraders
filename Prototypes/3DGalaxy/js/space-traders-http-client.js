@@ -74,8 +74,21 @@ export async function* fetchAllSystems() {
   }
 }
 
-export async function speedTest() {
-  setInterval(async () => {
-    api.get(`systems?page=1&limit=20`);
-  }, 300);
+export async function fetchAllMyShips() {
+  const pageLimit = 20;
+
+  // Fetch the first page to get the total count
+  const firstPageResponse = await api.get(`my/ships?page=1&limit=${pageLimit}`);
+  const firstPageBody = await firstPageResponse.json();
+  yield firstPageBody.data;
+
+  const totalShips = firstPageBody.meta.total;
+  const totalPages = Math.ceil(totalShips / pageLimit);
+
+  // Start from the second page since we've already fetched the first page
+  for (let currentPage = 2; currentPage <= totalPages; currentPage++) {
+    const pageResponse = await api.get(`my/ships?page=${currentPage}&limit=${pageLimit}`);
+    const pageBody = await pageResponse.json();
+    yield pageBody.data;
+  }
 }

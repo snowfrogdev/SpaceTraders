@@ -1,3 +1,4 @@
+import { randomBetweenWithExclusion, randomBetween } from "./utils.js";
 import { Repository } from "./repository.js";
 import { fetchAllSystems, fetchAllMyShips, fetchAllWaypointsInSystem } from "./space-traders-api.js";
 import { ZCalculator } from "./star-z-calculator.js";
@@ -59,6 +60,13 @@ const createScene = async function () {
 
   const y = zCalculator.getZ(system.x, system.y);
   starMesh.position = new BABYLON.Vector3(system.x, y, system.y);
+  const starLight = new BABYLON.PointLight("Star Light", starMesh.position, scene);
+  starLight.range = 200;
+  starLight.intensity = 10;
+
+  const hemisphericLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+  hemisphericLight.intensity = 0.5; // Adjust this value for desired ambient light intensity
+
   // set camera close to star and aim it to look at star
   camera.setPosition(new BABYLON.Vector3(system.x, y + 50, system.y - 150));
   camera.setTarget(starMesh.position.clone());
@@ -72,12 +80,14 @@ const createScene = async function () {
       scene
     );
     const waypointMaterial = new BABYLON.StandardMaterial(`Waypoint ${waypoint.symbol}-${waypoint.type}`, scene);
+    waypointMaterial.specularColor = new BABYLON.Color3(0.01, 0.01, 0.01);
+    waypointMaterial.specularPower = 1;
     waypointMesh.material = waypointMaterial;
     waypointMesh.parent = waypointOrbit;
 
     if (waypoint.type === "MOON" || waypoint.type === "ORBITAL_STATION") {
       waypointOrbit.position = new BABYLON.Vector3(system.x + waypoint.x, starMesh.position.y, system.y + waypoint.y);
-      waypointMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_moon.jpg", scene);
+      waypointMaterial.diffuseTexture = new BABYLON.Texture("assets/2k_moon.jpg", scene);
       waypointMesh.position = new BABYLON.Vector3(
         randomBetweenWithExclusion(-5, 5, -1, 1),
         0,
@@ -87,7 +97,7 @@ const createScene = async function () {
       waypointMesh.scaling = new BABYLON.Vector3(size, size, size);
     } else {
       waypointOrbit.position = starMesh.position.clone();
-      waypointMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_neptune.jpg", scene);
+      waypointMaterial.diffuseTexture = new BABYLON.Texture("assets/2k_neptune.jpg", scene);
 
       waypointMesh.position = new BABYLON.Vector3(waypoint.x, 0, waypoint.y);
       const size = randomBetween(1.5, 4);
@@ -132,30 +142,3 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
   engine.resize();
 });
-
-function randomBetween(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-function randomBetweenWithExclusion(min, max, exclusionMin, exclusionMax) {
-  if (exclusionMin >= exclusionMax) {
-    throw new Error("Invalid exclusion range");
-  }
-
-  const range = max - min;
-  const exclusionRange = exclusionMax - exclusionMin;
-
-  // If the exclusion range is outside of the main range, just return a simple random number
-  if (exclusionMax <= min || exclusionMin >= max) {
-    return Math.random() * range + min;
-  }
-
-  const adjustedMax = max - exclusionRange;
-  let result = Math.random() * (adjustedMax - min) + min;
-
-  if (result >= exclusionMin) {
-    result += exclusionRange;
-  }
-
-  return result;
-}

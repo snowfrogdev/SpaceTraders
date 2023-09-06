@@ -1,10 +1,9 @@
 import ky from "ky";
 import { consumeToken, increaseRefillInterval, decreaseRefillInterval } from "./token-bucket.js";
+import { SpaceTradersAuthToken } from "../app-settings.js";
 
 const BASE_URL = "https://api.spacetraders.io/v2/";
-const AUTH_TOKEN =
-  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiRkFSVF9NT05LRVkiLCJ2ZXJzaW9uIjoidjIiLCJyZXNldF9kYXRlIjoiMjAyMy0wOS0wMiIsImlhdCI6MTY5MzcwMjY0Niwic3ViIjoiYWdlbnQtdG9rZW4ifQ.Wr5kI-Mc6brZPtNNp2SqnSTgB0l0sZTdsND4TW3jhCgW7wIrj_asKjF8wQ54S2QB-RChJ4l3z_gooBVxrSAUT8U4BbmlR84RAzLD-Pdp1zaQiFKhM8-kOoq36z8hJWry0IQD6Pfaj3ofZaFX-J47IkrVrl9jRRUuJGNDBp8fGWnfSFPeAxwOrNYiVlUbzb5lOjUa9XXU1C9wu927FGB9TBqyez5oU9LdJvjtcm6xX2ra5cExOQ0j-cZLD5MyqsH2FvFuVqmSC70GJPllQ6MinvGuz9KwGW-zwwZxFcw3YD-V8ya6If4KQaTbbpVwl6Xxun5JKapGF3yXJ31Y-uc1xA";
-
+const AUTH_TOKEN = SpaceTradersAuthToken;
 // RPM stats
 let totalRequests = 0;
 const sessionStartTimestamp = Date.now();

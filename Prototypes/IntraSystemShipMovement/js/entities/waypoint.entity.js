@@ -42,18 +42,18 @@ export class WaypointEntity extends Entity {
         this.primaryEntity.position.y,
         this.primaryEntity.position.z + this.position.z
       );
-      waypointMaterial.diffuseTexture = new BABYLON.Texture("assets/2k_moon.jpg", scene);
+      waypointMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_moon.jpg", scene);
       this.waypointMesh.position = new BABYLON.Vector3(
-        randomBetweenWithExclusion(-5, 5, -1, 1),
+        randomBetweenWithExclusion(-6, 6, -1, 1),
         0,
-        randomBetweenWithExclusion(-5, 5, -1, 1)
+        randomBetweenWithExclusion(-6, 6, -1, 1)
       );
       const size = randomBetween(0.5, 1.25);
       this.scale = { x: size, y: size, z: size };
       this.waypointMesh.scaling = new BABYLON.Vector3(size, size, size);
     } else {
       this.waypointOrbit.position = this.primaryEntity.starMesh.position.clone();
-      waypointMaterial.diffuseTexture = new BABYLON.Texture("assets/2k_neptune.jpg", scene);
+      waypointMaterial.emissiveTexture = new BABYLON.Texture("assets/2k_neptune.jpg", scene);
       this.waypointMesh.position = new BABYLON.Vector3(this.position.x, 0, this.position.z);
       const size = randomBetween(1.5, 4);
       this.scale = { x: size, y: size, z: size };
@@ -61,7 +61,7 @@ export class WaypointEntity extends Entity {
     }
 
     // Create label for each waypoint
-    createObjectLabel(this.symbol, this.waypointMesh, scene);
+    createObjectLabel(this.symbol, this.waypointMesh);
 
     const radius = Math.sqrt(
       this.waypointMesh.position.x * this.waypointMesh.position.x + this.waypointMesh.position.z * this.waypointMesh.position.z

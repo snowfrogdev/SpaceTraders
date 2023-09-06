@@ -9,6 +9,7 @@ export class ShipEntity extends Entity {
   shipMesh = null;
   currentSystemEntity = null;
   waypointOrbit = null;
+  isSelected = false;
 
   constructor(symbol, x, y, z) {
     super(symbol);
@@ -24,7 +25,7 @@ export class ShipEntity extends Entity {
   }
 
   async init(scene) {
-    this.waypointOrbit = new BABYLON.TransformNode(`Waypoint Orbit ${this.symbol}-${this.type}`, scene);
+    this.waypointOrbit = new BABYLON.TransformNode(`Ship Orbit ${this.symbol}-${this.type}`, scene);
     this.waypointOrbit.position = this.currentSystemEntity.starMesh.position.clone();
 
     this.createShipMesh(scene);
@@ -35,9 +36,22 @@ export class ShipEntity extends Entity {
   createShipMesh(scene) {
     this.shipMesh = new BABYLON.MeshBuilder.CreateBox(`Ship ${this.symbol}`, { size: 2 }, scene);
     const shipMaterial = new BABYLON.StandardMaterial(`Ship Material ${this.symbol}`, scene);
-    shipMaterial.diffuseColor = new BABYLON.Color3(0.9, 0.1, 0.1);
+    shipMaterial.emissiveColor = new BABYLON.Color3(0.9, 0.1, 0.1);
     this.shipMesh.material = shipMaterial;
-    createObjectLabel(this.symbol, this.shipMesh, "red");
+    createObjectLabel(this.symbol, this.shipMesh, "red", scene, (label) => {
+      if (!this.isSelected) {
+        this.isSelected = true;
+        label.alpha = 1;
+        label.color = "yellow";
+        label.thickness = 3;
+        return;
+      }      
+
+      this.isSelected = false;
+      label.alpha = 0.9;
+      label.color = "white";
+      label.thickness = 1;
+    });
   }
 
   update(deltaTime) {
@@ -56,6 +70,9 @@ export class ShipEntity extends Entity {
       this.shipMesh.position = new BABYLON.Vector3(this.position.x + 1.5, 2.5, this.position.z + 1.5);
       this.shipMesh.rotation = new BABYLON.Vector3(this.rotation.x, this.rotation.y, this.rotation.z);
       this.shipMesh.scaling = new BABYLON.Vector3(this.scale.x, this.scale.y, this.scale.z);
+    }
+    if (this.nav.status === "DOCKED") {
+      this.shipMesh.visibility = 0;
     }
   }
 }

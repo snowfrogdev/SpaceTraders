@@ -25,9 +25,9 @@ export class SystemEntity extends Entity {
     const starMaterial = await BABYLON.NodeMaterial.ParseFromSnippetAsync("SGX0YM#1", scene);
     this.starMesh.material = starMaterial;
 
-    const starLight = new BABYLON.PointLight("Star Light", this.starMesh.position, scene);
-    starLight.range = 200;
-    starLight.intensity = 10;
+    //const starLight = new BABYLON.PointLight("Star Light", this.starMesh.position, scene);
+    //starLight.range = 200;
+    //starLight.intensity = 10;
   }
 
   update(deltaTime) {

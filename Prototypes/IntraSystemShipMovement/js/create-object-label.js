@@ -1,8 +1,8 @@
-export function createObjectLabel(text, targetMesh) {
+export function createObjectLabel(text, targetMesh, color) {
   const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
   const label = new BABYLON.GUI.Rectangle("label for " + text);
-  label.background = "black";
+  label.background = color ?? "black";
   label.height = "30px";
   label.alpha = 0.5;
   label.width = "200px";

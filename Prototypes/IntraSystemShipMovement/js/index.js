@@ -1,9 +1,8 @@
-import { randomBetweenWithExclusion, randomBetween } from "./services/utils.js";
 import { Repository } from "./services/repository.js";
 import { fetchAllSystems, fetchAllMyShips, fetchAllWaypointsInSystem } from "./services/space-traders-api.js";
 import { SystemEntity } from "./entities/system.entity.js";
-import { RenderableComponent } from "./components/renderable.component.js";
-import { createObjectLabel } from "./create-object-label.js";
+import { WaypointEntity } from "./entities/waypoint.entity.js";
+import { ShipEntity } from "./entities/ship.entity.js";
 
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true, { stencil: true });
@@ -39,16 +38,6 @@ for await (const waypoints of fetchAllWaypointsInSystem(myShips[0].nav.systemSym
   }
 }
 
-function createShipMesh(ship, scene) {
-  const shipOrbit = new BABYLON.TransformNode(`Waypoint Orbit ${ship.symbol}`, scene);
-  const shipMesh = new BABYLON.MeshBuilder.CreateBox(`Ship ${ship.symbol}`, { size: 2 }, scene);
-  const shipMaterial = new BABYLON.StandardMaterial(`Ship Material ${ship.symbol}`, scene);
-  shipMaterial.diffuseColor = new BABYLON.Color3(0.9, 0.1, 0.1);
-  shipMesh.material = shipMaterial;
-  createObjectLabel(ship.symbol, shipMesh, scene);
-  return shipMesh;
-}
-
 const entities = [];
 
 const createScene = async function () {
@@ -68,71 +57,23 @@ const createScene = async function () {
   const hemisphericLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
   hemisphericLight.intensity = 0.5;
 
-  /* for (const waypoint of systemWaypoints) {
-    const waypointOrbit = new BABYLON.TransformNode(`Waypoint Orbit ${waypoint.symbol}-${waypoint.type}`, scene);
-    const waypointMesh = new BABYLON.MeshBuilder.CreateSphere(
-      `Waypoint ${waypoint.symbol}-${waypoint.type}`,
-      { size: 1, segments: 16 },
-      scene
-    );
-    const waypointMaterial = new BABYLON.StandardMaterial(`Waypoint ${waypoint.symbol}-${waypoint.type}`, scene);
-    waypointMaterial.specularColor = new BABYLON.Color3(0.01, 0.01, 0.01);
-    waypointMaterial.specularPower = 1;
-    waypointMesh.material = waypointMaterial;
-    waypointMesh.parent = waypointOrbit;
-
-    if (waypoint.type === "MOON" || waypoint.type === "ORBITAL_STATION") {
-      waypointOrbit.position = new BABYLON.Vector3(systemDto.x + waypoint.x, starMesh.position.y, systemDto.y + waypoint.y);
-      waypointMaterial.diffuseTexture = new BABYLON.Texture("assets/2k_moon.jpg", scene);
-      waypointMesh.position = new BABYLON.Vector3(
-        randomBetweenWithExclusion(-5, 5, -1, 1),
-        0,
-        randomBetweenWithExclusion(-5, 5, -1, 1)
-      );
-      const size = randomBetween(0.5, 1.25);
-      waypointMesh.scaling = new BABYLON.Vector3(size, size, size);
-    } else {
-      waypointOrbit.position = starMesh.position.clone();
-      waypointMaterial.diffuseTexture = new BABYLON.Texture("assets/2k_neptune.jpg", scene);
-      waypointMesh.position = new BABYLON.Vector3(waypoint.x, 0, waypoint.y);
-      const size = randomBetween(1.5, 4);
-      waypointMesh.scaling = new BABYLON.Vector3(size, size, size);
-    }
-
-    // Create label for each waypoint
-    createObjectLabel(waypoint.symbol, waypointMesh, scene);
-
-    rotatingMeshes.push(waypointMesh);
-
-    const radius = Math.sqrt(
-      waypointMesh.position.x * waypointMesh.position.x + waypointMesh.position.z * waypointMesh.position.z
-    );
-    const points = [];
-    const numPoints = 100;
-
-    for (let i = 0; i < numPoints; i++) {
-      const angle = (i * 2 * Math.PI) / numPoints;
-      points.push(new BABYLON.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
-    }
-    points.push(points[0]);
-
-    const orbitLine = BABYLON.MeshBuilder.CreateLines("Orbit Line", { points: points }, scene);
-    orbitLine.parent = waypointOrbit;
+  for (const waypoint of systemWaypoints) {
+    const waypointEntity = WaypointEntity.createFrom(waypoint, systemEntity);
+    entities.push(waypointEntity);
   }
 
   for (const ship of myShips) {
-    const shipMesh = createShipMesh(ship, scene);
-    shipMesh.parent = starMesh;
-    shipMesh.position = new BABYLON.Vector3(ship.x, 0, ship.y);
-  } */
+    const shipEntity = ShipEntity.createFrom(ship, systemEntity);
+    entities.push(shipEntity);
+  }
 
   for (const entity of entities) {
     await entity.init(scene);
   }
 
-  const systemMesh = systemEntity.getComponent(RenderableComponent).mesh;
-  camera.setPosition(new BABYLON.Vector3(systemMesh.position.x, systemMesh.position.y + 50, systemMesh.position.z - 150));
-  camera.setTarget(systemMesh.position.clone());
+  const starMesh = systemEntity.starMesh;
+  camera.setPosition(new BABYLON.Vector3(starMesh.position.x, starMesh.position.y + 50, starMesh.position.z - 150));
+  camera.setTarget(starMesh.position.clone());
 
   return scene;
 };
@@ -143,13 +84,7 @@ engine.runRenderLoop(function () {
   const deltaTime = scene.getEngine().getDeltaTime();
   entities.forEach((entity) => entity.update(deltaTime));
 
-  for (const entity of entities) {
-    for (const component of entity.components) {
-      if (component instanceof RenderableComponent) {
-        component.render();
-      }
-    }
-  }
+  entities.forEach((entity) => entity.render());
 
   scene.render();
 });

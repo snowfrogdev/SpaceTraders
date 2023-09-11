@@ -54,9 +54,6 @@ const createScene = async function () {
   const systemEntity = SystemEntity.createFrom(systemDto);
   entities.push(systemEntity);
 
-  /* const hemisphericLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
-  hemisphericLight.intensity = 0.5; */
-
   for (const waypoint of systemWaypoints) {
     const waypointEntity = WaypointEntity.createFrom(waypoint, systemEntity);
     entities.push(waypointEntity);

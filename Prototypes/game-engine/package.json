@@ -1,0 +1,22 @@
+{
+  "name": "game-engine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@babylonjs/inspector": "^6.20.0",
+    "@types/uuid": "^9.0.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^6.19.1",
+    "@babylonjs/materials": "^6.19.1",
+    "uuid": "^9.0.0"
+  }
+}

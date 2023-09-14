@@ -1,2 +1,6 @@
 app-settings.js
 pcconfig.json
+
+# Env files
+environment.development.ts
+environment.ts

@@ -14,9 +14,9 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Lauch Chrome against Vite DEV Server",
-      "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}/Prototypes/playcanvas/src",
+      "name": "Lauch Chrome against Angular DEV Server",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/Prototypes/angular/src",
       "sourceMaps": true
     }
   ]

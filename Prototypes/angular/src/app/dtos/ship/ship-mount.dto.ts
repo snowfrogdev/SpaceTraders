@@ -1,4 +1,5 @@
 import { ShipMountDepositSymbol } from "./ship-mount-deposit-symbol";
+import { ShipMountSymbol } from "./ship-mount-symbol";
 import { ShipRequirements } from "./ship-requirements";
 
 export type ShipMountDto = {

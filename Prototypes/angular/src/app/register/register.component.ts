@@ -1,13 +1,17 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { FactionSymbol } from "../dtos/faction-symbol";
+import { FactionSymbol } from "../dtos/faction/faction-symbol";
 import { MatButtonModule } from "@angular/material/button";
 import { HttpClient } from "@angular/common/http";
 import { environment as env } from "src/environments/environment";
+import { Dto } from "../dtos/dto";
+import { RegisterNewAgentDto } from "../dtos/register-new-agent.dto";
+import { DB, MyDatabse } from "../db";
+import { AuthService } from "../auth.service";
 
 @Component({
   selector: "app-login",
@@ -114,7 +118,13 @@ export class RegisterComponent implements OnInit {
     password: FormControl<string | null>;
   }>;
 
-  constructor(private readonly _fb: FormBuilder, private readonly _http: HttpClient) {}
+  constructor(
+    private readonly _fb: FormBuilder,
+    private readonly _http: HttpClient,
+    @Inject(DB) private readonly _db: MyDatabse,
+
+    private readonly _authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.form = this.form = this._fb.group({
@@ -130,6 +140,24 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this._http.get(`${env.apiUrl}/register`).subscribe();
+    const body = {
+      faction: this.form.get("faction")?.value ?? "",
+      symbol: this.form.get("symbol")?.value ?? "",
+      email: this.form.get("email")?.value ?? "",
+    };
+
+    this._http.post<Dto<RegisterNewAgentDto>>(`${env.apiUrl}/register`, body).subscribe((dto) => {
+      this._db.users.insert({
+        symbol: dto.data.agent.symbol,
+        faction: dto.data.faction.symbol,
+        email: this.form.get("email")?.value ?? "",
+        password: this.form.get("password")?.value ?? "",
+        token: dto.data.token,
+      });
+    });
+  }
+
+  async signIn() {
+    await this._authService.signIn("http://localhost:4200/callback");
   }
 }

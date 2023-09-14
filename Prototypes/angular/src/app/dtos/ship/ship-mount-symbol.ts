@@ -1,4 +1,4 @@
-type ShipMountSymbol =
+export type ShipMountSymbol =
   | "MOUNT_GAS_SIPHON_I"
   | "MOUNT_GAS_SIPHON_II"
   | "MOUNT_GAS_SIPHON_III"

@@ -1,7 +1,7 @@
 import { AgentDto } from "./agent.dto";
-import { ContractDto } from "./contract.dto";
-import { FactionDto } from "./faction.dto";
-import { ShipDto } from "./ship.dto";
+import { ContractDto } from "./contract/contract.dto";
+import { FactionDto } from "./faction/faction.dto";
+import { ShipDto } from "./ship/ship.dto";
 
 export type RegisterNewAgentDto = {
   agent: AgentDto;

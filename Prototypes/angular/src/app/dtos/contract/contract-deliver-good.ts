@@ -1,4 +1,4 @@
-import { TradeSymbol } from "./trade-symbol";
+import { TradeSymbol } from "../trade-symbol";
 
 export type ContractDeliverGood = {
   tradeSymbol: TradeSymbol;

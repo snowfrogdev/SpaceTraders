@@ -1,7 +1,14 @@
 import { Routes } from "@angular/router";
-import { LoginComponent } from "./login/login.component";
+import { authGuard } from "./auth.guard";
+import { signInCallbackGuard } from "./sign-in-callback.guard";
+import { NoopComponent } from "./noop/noop.component";
 
 export const routes: Routes = [
-  { path: "login", loadComponent: () => import("./login/login.component").then((module) => module.LoginComponent) },
-  { path: "register", loadComponent: () => import("./register/register.component").then((module) => module.RegisterComponent)}
+  { path: "sign-in-callback", canActivate: [signInCallbackGuard], component: NoopComponent },
+  {
+    path: "",
+    canActivate: [authGuard],
+    loadChildren: () => import("./shell/shell.routes"),
+  },
+  { path: "**", redirectTo: "" },
 ];

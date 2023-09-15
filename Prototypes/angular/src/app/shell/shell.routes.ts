@@ -9,6 +9,10 @@ export default [
         path: "",
         loadComponent: () => import("../dashboard/dashboard.component").then((module) => module.DashboardComponent),
       },
+      {
+        path: "agents",
+        loadComponent: () => import("../agents/agents.component").then((module) => module.AgentsComponent),
+      },
       { path: "**", redirectTo: "" },
     ],
   },

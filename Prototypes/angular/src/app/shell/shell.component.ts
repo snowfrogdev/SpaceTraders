@@ -8,7 +8,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 import { CommonModule } from "@angular/common";
-import { RouterOutlet } from "@angular/router";
+import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { AuthService } from "../auth.service";
 
 @Component({
@@ -25,7 +25,7 @@ import { AuthService } from "../auth.service";
       >
         <mat-toolbar>Menu</mat-toolbar>
         <mat-nav-list>
-          <a mat-list-item href="#">Agents</a>
+          <a mat-list-item routerLink="/agents" routerLinkActive="active" ariaCurrentWhenActive="page">Agents</a>
           <a mat-list-item href="#">Link 2</a>
           <a mat-list-item href="#">Link 3</a>
         </mat-nav-list>
@@ -41,13 +41,15 @@ import { AuthService } from "../auth.service";
           >
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
-          <span>SpaceTraders Manager</span>
+          <a mat-button routerLink=""><span class="mat-toolbar">SpaceTraders Manager</span></a>
           <span class="spacer"></span>
           <button type="button" mat-icon-button aria-label="Logout" (click)="logout()">
             <mat-icon aria-label="Logout icon">logout</mat-icon>
           </button>
         </mat-toolbar>
-        <router-outlet></router-outlet>
+        <main>
+          <router-outlet></router-outlet>
+        </main>
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,
@@ -74,6 +76,11 @@ import { AuthService } from "../auth.service";
       .spacer {
         flex: 1 1 auto;
       }
+
+      main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
     `,
   ],
   standalone: true,
@@ -85,6 +92,8 @@ import { AuthService } from "../auth.service";
     MatListModule,
     MatIconModule,
     RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
   ],
 })
 export class ShellComponent {

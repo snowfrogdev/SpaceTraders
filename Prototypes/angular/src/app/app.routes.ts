@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
-import { authGuard } from "./auth.guard";
-import { signInCallbackGuard } from "./sign-in-callback.guard";
+import { authGuard } from "./services/auth.guard";
+import { signInCallbackGuard } from "./services/sign-in-callback.guard";
 import { NoopComponent } from "./noop/noop.component";
 
 export const routes: Routes = [

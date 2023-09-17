@@ -1,11 +1,9 @@
 import { Injectable } from "@angular/core";
-import { DualTokenBucket } from "./token-bucket";
 import { CommandMediatorService } from "./command-mediator.service";
 import { Subscription, interval } from "rxjs";
+import { Command } from "./command";
+import { DualTokenBucketService } from "./token-bucket.service";
 
-@Injectable({
-  providedIn: "root",
-})
 export class CommandQueueService {
   private readonly _queue: Command[] = [];
   private commandExecutionSubscription?: Subscription;
@@ -14,15 +12,23 @@ export class CommandQueueService {
     return this._queue.length;
   }
 
-  constructor(private readonly _tokenBucket: DualTokenBucket, private readonly _mediator: CommandMediatorService) {}
+  constructor(
+    private readonly _tokenBucket: DualTokenBucketService,
+    private readonly _mediator: CommandMediatorService
+  ) {}
 
-  async enqueueCommand<T extends Command>(command: T): Promise<boolean> {
+  async enqueue<T extends Command>(command: T): Promise<boolean> {
     if (this.size >= 180) {
       return false;
     }
 
     this._queue.push(command);
     this._queue.sort((a, b) => b.scheduledTime.getTime() - a.scheduledTime.getTime());
+
+    if (!this.commandExecutionSubscription) {
+      console.warn(`Command ${command.constructor.name} has been queued but command execution has not been started`);
+    }
+
     return true;
   }
 
@@ -52,8 +58,4 @@ export class CommandQueueService {
       this.commandExecutionSubscription = undefined;
     }
   }
-}
-
-export abstract class Command {
-  scheduledTime = new Date();
 }

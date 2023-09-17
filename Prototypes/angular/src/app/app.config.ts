@@ -1,11 +1,16 @@
-import { APP_INITIALIZER, ApplicationConfig, InjectionToken } from "@angular/core";
+import { APP_INITIALIZER, ApplicationConfig } from "@angular/core";
 import { provideRouter } from "@angular/router";
-import { provideHttpClient } from "@angular/common/http";
+import { HttpClient, provideHttpClient } from "@angular/common/http";
 
 import { routes } from "./app.routes";
 import { provideAnimations } from "@angular/platform-browser/animations";
-import { DatabaseService, initDatabase } from "./database.service";
-import { DualTokenBucket } from "./token-bucket";
+import { DatabaseService, initDatabase } from "./services/database.service";
+import { DualTokenBucketService } from "./services/token-bucket.service";
+import { CommandMediatorService } from "./services/command-mediator.service";
+import { RegisterNewAgentHandler } from "./commands/register-new-agent.handler";
+import { CommandQueueService } from "./services/command-queue.service";
+import { AuthService } from "./services/auth.service";
+import { GetPublicAgentHandler } from "./commands/get-my-agents.handler";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,14 +21,30 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: () => initDatabase,
       multi: true,
-      deps: [
-        /* your dependencies */
-      ],
     },
     DatabaseService,
     {
-      provide: DualTokenBucket,
-      useFactory: () => new DualTokenBucket(2, 2, 10, 1),
+      provide: DualTokenBucketService,
+      useValue: new DualTokenBucketService(2, 2, 10, 1),
+    },
+    {
+      provide: CommandMediatorService,
+      useFactory: (http: HttpClient, auth: AuthService, db: DatabaseService) => {
+        return new CommandMediatorService([
+          new RegisterNewAgentHandler(http, auth, db),
+          new GetPublicAgentHandler(http, db),
+        ]);
+      },
+      deps: [HttpClient, AuthService, DatabaseService],
+    },
+    {
+      provide: CommandQueueService,
+      useFactory: (tokenBucket: DualTokenBucketService, mediator: CommandMediatorService) => {
+        const queue = new CommandQueueService(tokenBucket, mediator);
+        queue.startExecutingCommands();
+        return queue;
+      },
+      deps: [DualTokenBucketService, CommandMediatorService],
     },
   ],
 };

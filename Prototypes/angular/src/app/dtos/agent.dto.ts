@@ -1,8 +1,8 @@
 export type AgentDto = {
-  accountId: string;
+  accountId?: string;
   symbol: string;
   headquarters: string;
-  credits: string;
+  credits: number;
   startingFaction: string;
-  shipCount: string;
-}
+  shipCount: number;
+};

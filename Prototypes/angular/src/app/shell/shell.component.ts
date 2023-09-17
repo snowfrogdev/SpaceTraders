@@ -9,7 +9,7 @@ import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 import { CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
-import { AuthService } from "../auth.service";
+import { AuthService } from "../services/auth.service";
 
 @Component({
   selector: "app-shell",
@@ -80,6 +80,11 @@ import { AuthService } from "../auth.service";
       main {
         padding-left: 1rem;
         padding-right: 1rem;
+      }
+
+      .active {
+        font-weight: bold;
+        background-color: rgb(245, 207, 61);
       }
     `,
   ],

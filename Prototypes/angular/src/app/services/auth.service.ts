@@ -2,13 +2,20 @@ import { Injectable } from "@angular/core";
 import LogtoClient from "@logto/browser";
 import { environment } from "src/environments/environment";
 import { DatabaseService } from "./database.service";
-import { RxUserDocument } from "./schemas/user.schema";
+import { RxUserDocument } from "../schemas/user.schema";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  private user: RxUserDocument | null = null;
+  private user: {
+    id: string;
+    userName: string;
+    agents: {
+      symbol: string;
+      token: string;
+    }[];
+  } | null = null;
   private readonly _logtoClient: LogtoClient;
   constructor(private readonly _dbService: DatabaseService) {
     this._logtoClient = new LogtoClient({
@@ -20,7 +27,7 @@ export class AuthService {
   async handleSignInCallback(callbackUri: string) {
     await this._logtoClient.handleSignInCallback(callbackUri);
     const userInfo = await this._logtoClient.fetchUserInfo();
-    this._dbService.db.user.upsert({ id: userInfo.sub, userName: userInfo.name! });
+    this._dbService.db.user.insert({ id: userInfo.sub, userName: userInfo.username!, agents: [] });
   }
 
   async isAuthenticated(): Promise<boolean> {
@@ -36,12 +43,30 @@ export class AuthService {
     await this._logtoClient.signOut(window.location.origin);
   }
 
-  async getUser(): Promise<RxUserDocument | null> {
+  async getUser(): Promise<User | null> {
     if (!this.user) {
       const userInfo = await this._logtoClient.fetchUserInfo();
-      this.user = await this._dbService.db.user.findOne({ selector: { id: userInfo.sub } }).exec();
+      const userDoc = await this._dbService.db.user.findOne({ selector: { id: userInfo.sub } }).exec();
+      if (!userDoc) {
+        return (this.user = await this._dbService.db.user.insert({
+          id: userInfo.sub,
+          userName: userInfo.username!,
+          agents: [],
+        }));
+      }
+
+      this.user = userDoc;
     }
 
     return this.user;
   }
 }
+
+export type User = {
+  id: string;
+  userName: string;
+  agents: {
+    symbol: string;
+    token: string;
+  }[];
+};

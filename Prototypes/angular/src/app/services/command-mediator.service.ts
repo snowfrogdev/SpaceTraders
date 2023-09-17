@@ -1,18 +1,22 @@
 import { Injectable } from "@angular/core";
-import { Command } from "./command-queue.service";
+import { CommandHandler } from "./command-handler";
+import { Command } from "./command";
 
-@Injectable({
-  providedIn: "root",
-})
 export class CommandMediatorService {
   private readonly _handlers = new Map<typeof Command, CommandHandler<Command>>();
 
-  register<T extends Command>(commandType: new () => T, handler: CommandHandler<T>) {
-    if (this._handlers.has(commandType)) {
-      throw new Error(`Command ${commandType.name} already has a handler registered`);
+  constructor(handlers: CommandHandler<Command>[]) {
+    for (const handler of handlers) {
+      this.register(handler);
+    }
+  }
+
+  register<T extends Command>(handler: CommandHandler<T>) {
+    if (this._handlers.has(handler.handles)) {
+      throw new Error(`Command ${handler.handles.name} already has a handler registered`);
     }
 
-    this._handlers.set(commandType, handler);
+    this._handlers.set(handler.handles, handler);
   }
   async send<T extends Command>(command: T): Promise<void> {
     const handler = this._handlers.get(command.constructor as typeof Command);
@@ -22,8 +26,4 @@ export class CommandMediatorService {
 
     await handler.handle(command);
   }
-}
-
-export interface CommandHandler<T extends Command> {
-  handle(command: T): Promise<void>;
 }

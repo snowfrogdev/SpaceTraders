@@ -1,13 +1,25 @@
-import { Injectable, InjectionToken } from "@angular/core";
-import { createRxDatabase } from "rxdb";
-import { USER_SCHEMA } from "./schemas/user.schema";
+import { Injectable, isDevMode } from "@angular/core";
+import { addRxPlugin, createRxDatabase } from "rxdb";
+import { USER_SCHEMA } from "../schemas/user.schema";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-import { RxSpaceTradersDatabase, RxCollections } from "./schemas";
+import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
+import { RxSpaceTradersDatabase, RxCollections } from "../schemas";
+import { AGENT_SCHEMA } from "../schemas/agent.schema";
+import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
+import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
+
+if (isDevMode()) {
+  addRxPlugin(RxDBDevModePlugin);
+}
+addRxPlugin(RxDBQueryBuilderPlugin);
 
 const collectionSettings = {
   user: {
     schema: USER_SCHEMA,
   },
+  agent: {
+    schema: AGENT_SCHEMA
+  }
 };
 
 /**
@@ -16,7 +28,7 @@ const collectionSettings = {
 async function _create(): Promise<RxSpaceTradersDatabase> {
   const db = await createRxDatabase<RxCollections>({
     name: "space-traders",
-    storage: getRxStorageDexie(),
+    storage: wrappedValidateAjvStorage({storage: getRxStorageDexie()}),
     multiInstance: false,
     eventReduce: true,
   });
@@ -46,3 +58,4 @@ export class DatabaseService {
     return DB_INSTANCE;
   }
 }
+

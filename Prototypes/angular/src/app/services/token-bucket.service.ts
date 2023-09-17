@@ -1,4 +1,4 @@
-export class DualTokenBucket {
+export class DualTokenBucketService {
   private tokensBucket1: number;
   private tokensBucket2: number;
   private lastRefillTimestamp: number;

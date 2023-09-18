@@ -8,7 +8,7 @@ import { MatRadioModule } from "@angular/material/radio";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { CommonModule } from "@angular/common";
-import { FactionSymbol } from "../dtos/faction/faction-symbol";
+import { FactionSymbol } from "../dtos/factions/faction-symbol";
 import { Command } from "../services/command";
 import { CommandQueueService } from "../services/command-queue.service";
 import { CommandMediatorService } from "../services/command-mediator.service";

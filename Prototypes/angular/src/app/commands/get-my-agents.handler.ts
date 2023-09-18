@@ -2,8 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Command } from "../services/command";
 import { CommandHandler } from "../services/command-handler";
 import { environment } from "src/environments/environment";
-import { RegisterNewAgentDto } from "../dtos/register-new-agent.dto";
-import { AuthService } from "../services/auth.service";
 import { AgentDto } from "../dtos/agent.dto";
 import { DatabaseService } from "../services/database.service";
 import { Dto } from "../dtos/dto";

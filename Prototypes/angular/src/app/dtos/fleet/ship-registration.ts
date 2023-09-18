@@ -1,4 +1,4 @@
-import { FactionSymbol } from "../faction/faction-symbol";
+import { FactionSymbol } from "../factions/faction-symbol";
 import { ShipRole } from "./ship-role";
 
 export type ShipRegistration = {

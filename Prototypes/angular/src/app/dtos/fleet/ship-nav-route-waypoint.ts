@@ -1,4 +1,4 @@
-import { WaypointType } from "../waypoint-type";
+import { WaypointType } from "../systems/waypoint-type";
 
 export type ShipNavRouteWaypoint = {
   symbol: string;

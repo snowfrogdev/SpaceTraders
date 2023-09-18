@@ -1,4 +1,4 @@
-import { FactionSymbol } from "../faction/faction-symbol";
+import { FactionSymbol } from "../factions/faction-symbol";
 
 export type SystemFactionDto = {
   symbol: FactionSymbol;

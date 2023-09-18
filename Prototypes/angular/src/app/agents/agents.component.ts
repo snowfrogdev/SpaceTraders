@@ -9,15 +9,15 @@ import { CommandQueueService } from "../services/command-queue.service";
 import { RegisterNewAgentCommand } from "../commands/register-new-agent.handler";
 import { AuthService } from "../services/auth.service";
 import { DatabaseService } from "../services/database.service";
-import { Observable, Subject, interval, map, switchMap, takeUntil, tap } from "rxjs";
-import { RxAgentDocument } from "../schemas/agent.schema";
+import { Observable, Subject, interval, map, startWith, switchMap, takeUntil } from "rxjs";
 import { GetPublicAgentCommand } from "../commands/get-my-agents.handler";
 import { AgentDto } from "../dtos/agent.dto";
+import { WaypointLinkComponent } from "../waypoint-link/waypoint-link.component";
 
 @Component({
   selector: "app-agents",
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatTableModule, MatDialogModule, MatButtonModule, MatIconModule, WaypointLinkComponent],
   template: `
     <h2>My Agents</h2>
     <table mat-table [dataSource]="myAgents$" class="mat-elevation-z8 demo-table">
@@ -28,7 +28,7 @@ import { AgentDto } from "../dtos/agent.dto";
 
       <ng-container matColumnDef="headquarters">
         <th mat-header-cell *matHeaderCellDef>Headquarters</th>
-        <td mat-cell *matCellDef="let element">{{ element.headquarters }}</td>
+        <td mat-cell *matCellDef="let element"><app-waypoint-link>{{ element.headquarters }}</app-waypoint-link></td>
       </ng-container>
 
       <ng-container matColumnDef="credits">
@@ -115,7 +115,12 @@ export class AgentsComponent implements OnInit, OnDestroy {
     this.myAgentsSymbolTokenMap$
       .pipe(
         takeUntil(this._unsubscribeAll),
-        switchMap((agents) => interval(15000).pipe(map(() => agents)))
+        switchMap((agents) =>
+          interval(15000).pipe(
+            startWith(0),
+            map(() => agents)
+          )
+        )
       )
       .subscribe((agents) => {
         for (const { symbol } of agents) {

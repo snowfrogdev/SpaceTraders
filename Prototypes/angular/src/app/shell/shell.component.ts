@@ -26,8 +26,8 @@ import { AuthService } from "../services/auth.service";
         <mat-toolbar>Menu</mat-toolbar>
         <mat-nav-list>
           <a mat-list-item routerLink="/agents" routerLinkActive="active" ariaCurrentWhenActive="page">Agents</a>
-          <a mat-list-item href="#">Link 2</a>
-          <a mat-list-item href="#">Link 3</a>
+          <a mat-list-item routerLink="/systems" routerLinkActive="active" ariaCurrentWhenActive="page">Systems</a>
+          <a mat-list-item routerLink="/waypoints" routerLinkActive="active" ariaCurrentWhenActive="page">Waypoints</a>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>

@@ -7,6 +7,7 @@ import { SystemsDataSource, SystemsItem } from './systems-datasource';
 @Component({
   selector: 'app-systems',
   template: `
+    <h2>Systems</h2>
     <div class="mat-elevation-z8">
       <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- Id Column -->

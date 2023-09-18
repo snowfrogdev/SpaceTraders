@@ -2,11 +2,12 @@ import { Injectable, isDevMode } from "@angular/core";
 import { addRxPlugin, createRxDatabase } from "rxdb";
 import { USER_SCHEMA } from "../schemas/user.schema";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
+import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
 import { RxSpaceTradersDatabase, RxCollections } from "../schemas";
 import { AGENT_SCHEMA } from "../schemas/agent.schema";
-import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
-import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
+import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
+import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
+import { WAYPOINT_SCHEMA } from "../schemas/waypoint.schema";
 
 if (isDevMode()) {
   addRxPlugin(RxDBDevModePlugin);
@@ -18,8 +19,11 @@ const collectionSettings = {
     schema: USER_SCHEMA,
   },
   agent: {
-    schema: AGENT_SCHEMA
-  }
+    schema: AGENT_SCHEMA,
+  },
+  waypoint: {
+    schema: WAYPOINT_SCHEMA,
+  },
 };
 
 /**
@@ -28,7 +32,7 @@ const collectionSettings = {
 async function _create(): Promise<RxSpaceTradersDatabase> {
   const db = await createRxDatabase<RxCollections>({
     name: "space-traders",
-    storage: wrappedValidateAjvStorage({storage: getRxStorageDexie()}),
+    storage: wrappedValidateAjvStorage({ storage: getRxStorageDexie() }),
     multiInstance: false,
     eventReduce: true,
   });
@@ -58,4 +62,3 @@ export class DatabaseService {
     return DB_INSTANCE;
   }
 }
-

@@ -9,7 +9,8 @@ import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 import { CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../../services/auth.service";
+import { GlobalStateService } from "src/app/services/global-state.service";
 
 @Component({
   selector: "app-shell",
@@ -28,6 +29,7 @@ import { AuthService } from "../services/auth.service";
           <a mat-list-item routerLink="/agents" routerLinkActive="active" ariaCurrentWhenActive="page">Agents</a>
           <a mat-list-item routerLink="/systems" routerLinkActive="active" ariaCurrentWhenActive="page">Systems</a>
           <a mat-list-item routerLink="/waypoints" routerLinkActive="active" ariaCurrentWhenActive="page">Waypoints</a>
+          <a mat-list-item routerLink="/contracts" routerLinkActive="active" ariaCurrentWhenActive="page">Contracts</a>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
@@ -43,6 +45,7 @@ import { AuthService } from "../services/auth.service";
           </button>
           <a mat-button routerLink=""><span class="mat-toolbar">SpaceTraders Manager</span></a>
           <span class="spacer"></span>
+          <span id="selected-agent" *ngIf="_globalState.selectedAgent()">{{_globalState.selectedAgent()?.symbol}}</span>
           <button type="button" mat-icon-button aria-label="Logout" (click)="logout()">
             <mat-icon aria-label="Logout icon">logout</mat-icon>
           </button>
@@ -77,6 +80,10 @@ import { AuthService } from "../services/auth.service";
         flex: 1 1 auto;
       }
 
+      #selected-agent {
+        margin-right: 2rem;
+      }
+
       main {
         padding-left: 1rem;
         padding-right: 1rem;
@@ -107,7 +114,11 @@ export class ShellComponent {
     shareReplay()
   );
 
-  constructor(private readonly _breakpointObserver: BreakpointObserver, private readonly _authService: AuthService) {}
+  constructor(
+    private readonly _breakpointObserver: BreakpointObserver,
+    private readonly _authService: AuthService,
+    readonly _globalState: GlobalStateService
+  ) {}
 
   logout() {
     this._authService.signOut();

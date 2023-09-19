@@ -1,13 +1,14 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-waypoint-link",
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatButtonModule],
   template: `
-    <a (click)="navigate()"
+    <a mat-button (click)="navigate($event)"
       ><span #contentWrapper><ng-content></ng-content></span
     ></a>
   `,
@@ -23,7 +24,8 @@ export class WaypointLinkComponent {
     this.waypoint = this.contentWrapper.nativeElement.textContent.trim();
   }
 
-  navigate() {
-    this._router.navigate(['/waypoints', this.waypoint]);
+  navigate(event: MouseEvent) {
+    event.stopPropagation();
+    this._router.navigate(["/waypoints", this.waypoint]);
   }
 }

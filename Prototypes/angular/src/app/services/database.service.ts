@@ -8,6 +8,7 @@ import { AGENT_SCHEMA } from "../schemas/agent.schema";
 import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import { WAYPOINT_SCHEMA } from "../schemas/waypoint.schema";
+import { CONTRACT_SCHEMA } from "../schemas/contracts.schema";
 
 if (isDevMode()) {
   addRxPlugin(RxDBDevModePlugin);
@@ -23,6 +24,9 @@ const collectionSettings = {
   },
   waypoint: {
     schema: WAYPOINT_SCHEMA,
+  },
+  contract: {
+    schema: CONTRACT_SCHEMA,
   },
 };
 

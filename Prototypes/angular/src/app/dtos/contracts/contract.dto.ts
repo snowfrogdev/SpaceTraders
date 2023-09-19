@@ -8,5 +8,5 @@ export type ContractDto = {
   terms: ContractTerms;
   accepted: boolean;
   fulfilled: boolean;
-  deadlineToAccept: string;
+  deadlineToAccept?: string;
 };

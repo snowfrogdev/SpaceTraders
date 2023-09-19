@@ -10,8 +10,9 @@ import { CommandMediatorService } from "./services/command-mediator.service";
 import { RegisterNewAgentHandler } from "./commands/register-new-agent.handler";
 import { CommandQueueService } from "./services/command-queue.service";
 import { AuthService } from "./services/auth.service";
-import { GetPublicAgentHandler } from "./commands/get-my-agents.handler";
+import { GetPublicAgentHandler } from "./commands/get-public-agent.handler";
 import { GetWaypointHandler } from "./commands/get-waypoint.handler";
+import { GetMyContractsHandler } from "./commands/get-my-contracts.handler";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
           new RegisterNewAgentHandler(http, auth, db),
           new GetPublicAgentHandler(http, db),
           new GetWaypointHandler(http, db),
+          new GetMyContractsHandler(http, db),
         ]);
       },
       deps: [HttpClient, AuthService, DatabaseService],

@@ -1,4 +1,4 @@
 export type ContractPayment = {
   onAccepted: number;
-  onFullfilled: number;
+  onFulfilled: number;
 };

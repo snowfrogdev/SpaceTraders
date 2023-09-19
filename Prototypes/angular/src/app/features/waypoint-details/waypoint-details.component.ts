@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { WaypointDto } from "../dtos/systems/waypoint.dto";
-import { DatabaseService } from "../services/database.service";
+import { WaypointDto } from "../../dtos/systems/waypoint.dto";
+import { DatabaseService } from "../../services/database.service";
 import { Observable, Subject, interval, map, startWith, switchMap, takeUntil, tap } from "rxjs";
-import { GetWaypointCommand } from "../commands/get-waypoint.handler";
-import { CommandQueueService } from "../services/command-queue.service";
+import { GetWaypointCommand } from "../../commands/get-waypoint.handler";
+import { CommandQueueService } from "../../services/command-queue.service";
 
 @Component({
   selector: "app-waypoint-details",
@@ -17,7 +17,7 @@ import { CommandQueueService } from "../services/command-queue.service";
   `,
   styles: [],
 })
-export class WaypointDetailsComponent implements OnInit {
+export class WaypointDetailsComponent implements OnInit, OnDestroy {
   waypointDetails$!: Observable<WaypointDto | null>;
   waypointSymbol$!: Observable<string>;
   private readonly _unsubscribeAll = new Subject<void>();
@@ -28,9 +28,16 @@ export class WaypointDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.waypointSymbol$ = this._route.paramMap.pipe(map((params) => params.get("waypointSymbol")!));
+    this.waypointSymbol$ = this._route.paramMap.pipe(
+      takeUntil(this._unsubscribeAll),
+      map((params) => params.get("waypointSymbol")!)
+    );
     this.waypointDetails$ = this.waypointSymbol$.pipe(
-      switchMap((symbol) => this._db.db.waypoint.findOne(symbol).$ as Observable<WaypointDto | null>)
+      takeUntil(this._unsubscribeAll),
+      switchMap(
+        (symbol) =>
+          this._db.db.waypoint.findOne(symbol).$.pipe(takeUntil(this._unsubscribeAll)) as Observable<WaypointDto | null>
+      )
     );
 
     // every 15 seconds, send a command to the server to get data related to this waypoint
@@ -39,6 +46,7 @@ export class WaypointDetailsComponent implements OnInit {
         takeUntil(this._unsubscribeAll),
         switchMap((symbol) =>
           interval(15000).pipe(
+            takeUntil(this._unsubscribeAll),
             startWith(0),
             map(() => symbol)
           )
@@ -49,5 +57,10 @@ export class WaypointDetailsComponent implements OnInit {
         const command = new GetWaypointCommand(`${sectorSymbol}-${systemSymbol}`, symbol);
         this._queue.enqueue(command);
       });
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }

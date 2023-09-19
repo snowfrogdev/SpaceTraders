@@ -108,4 +108,4 @@ export type RxWaypointDocumentType = ExtractDocumentTypeFromTypedRxJsonSchema<ty
 export const WAYPOINT_SCHEMA: RxJsonSchema<RxWaypointDocumentType> = WAYPOINT_SCHEMA_LITERAL;
 export type RxWaypointDocument = RxDocument<RxWaypointDocumentType>;
 
-export type RxWaypointtCollection = RxCollection<RxWaypointDocumentType>;
+export type RxWaypointCollection = RxCollection<RxWaypointDocumentType>;

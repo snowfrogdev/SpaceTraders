@@ -49,7 +49,7 @@ import { GlobalStateService } from "src/app/services/global-state.service";
         <tr
           mat-row
           (click)="selectAgent(row)"
-          [class.row-is-clicked]="row.symbol === selectedAgent?.symbol"
+          [class.agent-selected]="row.symbol === this.globalState.selectedAgent()?.symbol"
           *matRowDef="let row; columns: displayedColumns"
         ></tr>
       </table>
@@ -78,7 +78,7 @@ import { GlobalStateService } from "src/app/services/global-state.service";
         border-color: currentColor;
       }
 
-      .row-is-clicked {
+      .agent-selected {
         font-weight: bold;
       }
     `,
@@ -98,7 +98,7 @@ export class AgentsComponent implements OnInit, OnDestroy {
     private readonly _queue: CommandQueueService,
     private readonly _authService: AuthService,
     private readonly _db: DatabaseService,
-    private readonly globalState: GlobalStateService
+    readonly globalState: GlobalStateService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -163,7 +163,6 @@ export class AgentsComponent implements OnInit, OnDestroy {
   }
 
   async selectAgent(agent: AgentDto) {
-    this.selectedAgent = agent;
     const token = this.myAgentsSymbolTokenMap.find((a) => a.symbol === agent.symbol)?.token!;
     this.globalState.selectedAgent.set({ symbol: agent.symbol, token });
   }

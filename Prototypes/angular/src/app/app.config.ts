@@ -13,6 +13,7 @@ import { AuthService } from "./services/auth.service";
 import { GetPublicAgentHandler } from "./commands/get-public-agent.handler";
 import { GetWaypointHandler } from "./commands/get-waypoint.handler";
 import { GetMyContractsHandler } from "./commands/get-my-contracts.handler";
+import { AcceptContractHandler } from "./commands/accept-contract.handler";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +38,7 @@ export const appConfig: ApplicationConfig = {
           new GetPublicAgentHandler(http, db),
           new GetWaypointHandler(http, db),
           new GetMyContractsHandler(http, db),
+          new AcceptContractHandler(http, db),
         ]);
       },
       deps: [HttpClient, AuthService, DatabaseService],

@@ -7,70 +7,107 @@ import { GlobalStateService } from "src/app/services/global-state.service";
 import { GetMyContractsCommand } from "src/app/commands/get-my-contracts.handler";
 import { CommandQueueService } from "src/app/services/command-queue.service";
 import { MatTableModule } from "@angular/material/table";
+import { MatRippleModule } from "@angular/material/core";
+import { MatIconModule } from "@angular/material/icon";
+import { animate, state, style, transition, trigger } from "@angular/animations";
+import { MatButtonModule } from "@angular/material/button";
+import { AcceptContractCommand } from "src/app/commands/accept-contract.handler";
 
 @Component({
   selector: "app-contracts",
   standalone: true,
-  imports: [CommonModule, MatTableModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatRippleModule, MatIconModule],
+  animations: [
+    trigger("detailExpand", [
+      state("collapsed", style({ height: "0px", minHeight: "0" })),
+      state("expanded", style({ height: "*" })),
+      transition("expanded <=> collapsed", animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")),
+    ]),
+  ],
   template: `
     <h2>My Contracts</h2>
-    <table mat-table [dataSource]="myContracts$" class="mat-elevation-z8 demo-table">
+    <mat-table [dataSource]="myContracts$" class="mat-elevation-z8" multiTemplateDataRows>
       <ng-container matColumnDef="factionSymbol">
-        <th mat-header-cell *matHeaderCellDef>Faction</th>
-        <td mat-cell *matCellDef="let element">{{ element.factionSymbol }}</td>
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Faction</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">{{ element.factionSymbol }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef>Type</th>
-        <td mat-cell *matCellDef="let element">{{ element.type }}</td>
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">{{ element.type }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="payment">
-        <th mat-header-cell *matHeaderCellDef>Payment</th>
-        <td mat-cell *matCellDef="let element">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Payment</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">
           {{ element.terms.payment.onAccepted + element.terms.payment.onFulfilled }}
-        </td>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="deliver">
-        <th mat-header-cell *matHeaderCellDef>Goods</th>
-        <td mat-cell *matCellDef="let element">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Goods</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">
           <span *ngFor="let deliver of element.terms.deliver">{{ deliver.tradeSymbol }} </span>
-        </td>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="accepted">
-        <th mat-header-cell *matHeaderCellDef>Accepted</th>
-        <td mat-cell *matCellDef="let element">{{ element.accepted }}</td>
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Accepted</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">{{ element.accepted }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="fulfilled">
-        <th mat-header-cell *matHeaderCellDef>Fulfilled</th>
-        <td mat-cell *matCellDef="let element">{{ element.fulfilled }}</td>
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Fulfilled</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">{{ element.fulfilled }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="deadlineToAccept">
-        <th mat-header-cell *matHeaderCellDef>Accept Before</th>
-        <td mat-cell *matCellDef="let element">{{ element.deadlineToAccept | date : "medium" }}</td>
+        <mat-header-cell mat-header-cell *matHeaderCellDef>Accept Before</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">{{ element.deadlineToAccept | date : "medium" }}</mat-cell>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        (click)="selectContrat(row)"
-        [class.row-is-clicked]="row.id === selectedContract?.id"
-        *matRowDef="let row; columns: displayedColumns"
-      ></tr>
-    </table>
+      <ng-container matColumnDef="expand">
+        <mat-header-cell mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            aria-label="expand row"
+            (click)="expandedElement = expandedElement?.id === element.id ? null : element; $event.stopPropagation()"
+          >
+            <mat-icon *ngIf="expandedElement?.id !== element.id">keyboard_arrow_down</mat-icon>
+            <mat-icon *ngIf="expandedElement?.id === element.id">keyboard_arrow_up</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container matColumnDef="expandedDetail">
+        <mat-cell mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+          <div
+            class="example-element-detail"
+            [@detailExpand]="element?.id == expandedElement?.id ? 'expanded' : 'collapsed'"
+          >
+            <pre>{{ element | json }}</pre>
+            <button *ngIf="!element.accepted" class="accept-button" mat-raised-button color="primary" (click)="acceptContract(element)">
+              Accept
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></mat-header-row>
+      <mat-row
+        matRipple
+        class="example-element-row"
+        (click)="expandedElement = expandedElement?.id === row.id ? null : row"
+        [class.example-expanded-row]="expandedElement?.id === row.id"
+        *matRowDef="let row; columns: columnsToDisplayWithExpand"
+      ></mat-row>
+      <mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></mat-row>
+    </mat-table>
   `,
   styles: [
     `
-      button[mat-fab] {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-      }
-
       .mat-mdc-row .mat-mdc-cell {
         border-bottom: 1px solid transparent;
         border-top: 1px solid transparent;
@@ -81,15 +118,38 @@ import { MatTableModule } from "@angular/material/table";
         border-color: currentColor;
       }
 
-      .row-is-clicked {
-        font-weight: bold;
+      tr.example-detail-row {
+        height: 0;
+      }
+
+      tr.example-element-row:not(.example-expanded-row):hover {
+        background: whitesmoke;
+      }
+
+      tr.example-element-row:not(.example-expanded-row):active {
+        background: #efefef;
+      }
+
+      .example-element-row td {
+        border-bottom-width: 0;
+      }
+
+      .example-element-detail {
+        overflow: hidden;
+        display: flex;
+        gap: 1rem;
+      }
+
+      .accept-button {
+        align-self: end;
+        margin-bottom: 1rem;
       }
     `,
   ],
 })
 export class ContractsComponent implements OnInit {
   myContracts$!: Observable<ContractDto[]>;
-  selectedContract: ContractDto | null = null;
+  expandedElement: ContractDto | null = null;
   displayedColumns: string[] = [
     "factionSymbol",
     "type",
@@ -99,6 +159,7 @@ export class ContractsComponent implements OnInit {
     "fulfilled",
     "deadlineToAccept",
   ];
+  columnsToDisplayWithExpand = [...this.displayedColumns, "expand"];
 
   private _unsubscribeAll = new Subject<void>();
 
@@ -129,8 +190,9 @@ export class ContractsComponent implements OnInit {
       });
   }
 
-  selectContrat(contract: ContractDto): void {
-    this.selectedContract = contract;
+  acceptContract(contract: ContractDto): void {
+    const command = new AcceptContractCommand(contract.id, this._globalState.selectedAgent()!.token);
+    this._queue.enqueue(command);
   }
 
   ngOnDestroy(): void {

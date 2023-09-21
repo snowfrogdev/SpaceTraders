@@ -58,7 +58,7 @@ export class SystemsDataSource extends DataSource<SystemsItem> {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
       return merge(observableOf(this.data), this.paginator.page, this.sort.sortChange)
-        .pipe(map(() => {
+        .pipe(map((foo) => {
           return this.getPagedData(this.getSortedData([...this.data ]));
         }));
     } else {

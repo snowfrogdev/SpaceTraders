@@ -9,6 +9,7 @@ import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import { WAYPOINT_SCHEMA } from "../schemas/waypoint.schema";
 import { CONTRACT_SCHEMA } from "../schemas/contracts.schema";
+import { SYSTEM_SCHEMA } from "../schemas/system.schema";
 
 if (isDevMode()) {
   addRxPlugin(RxDBDevModePlugin);
@@ -28,6 +29,9 @@ const collectionSettings = {
   contract: {
     schema: CONTRACT_SCHEMA,
   },
+  system: {
+    schema: SYSTEM_SCHEMA
+  }
 };
 
 /**

@@ -35,39 +35,42 @@ export const SYSTEM_SCHEMA_LITERAL = {
       default: 0,
     },
     waypoints: {
-      type: "object",
-      properties: {
-        symbol: {
-          type: "string",
-          default: "",
-        },
-        type: {
-          type: "string",
-          default: "",
-        },
-        x: {
-          type: "integer",
-          default: 0,
-        },
-        y: {
-          type: "integer",
-          default: 0,
-        },
-        orbitals: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              symbol: {
-                type: "string",
-                default: "",
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          symbol: {
+            type: "string",
+            default: "",
+          },
+          type: {
+            type: "string",
+            default: "",
+          },
+          x: {
+            type: "integer",
+            default: 0,
+          },
+          y: {
+            type: "integer",
+            default: 0,
+          },
+          orbitals: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                symbol: {
+                  type: "string",
+                  default: "",
+                },
               },
             },
           },
-        },
-        orbits: {
-          type: "string",
-          default: "",
+          orbits: {
+            type: "string",
+            default: "",
+          },
         },
       },
     },

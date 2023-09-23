@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
@@ -7,6 +7,7 @@ import { MatButtonModule } from "@angular/material/button";
   selector: "app-waypoint-link",
   standalone: true,
   imports: [CommonModule, RouterModule, MatButtonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a mat-button (click)="navigate($event)"
       ><span #contentWrapper><ng-content></ng-content></span

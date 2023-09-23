@@ -55,6 +55,7 @@ export class WaypointDetailsComponent implements OnInit, OnDestroy {
       .subscribe((symbol) => {
         const [sectorSymbol, systemSymbol, waypointSymbol] = symbol.split("-");
         const command = new GetWaypointCommand(`${sectorSymbol}-${systemSymbol}`, symbol);
+        command.scheduledTime = new Date(0);
         this._queue.enqueue(command);
       });
   }

@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
 import { map } from "rxjs/operators";
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -63,6 +63,7 @@ import { CommonModule } from "@angular/common";
   ],
   standalone: true,
   imports: [CommonModule, MatGridListModule, MatMenuModule, MatIconModule, MatButtonModule, MatCardModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   private breakpointObserver = inject(BreakpointObserver);

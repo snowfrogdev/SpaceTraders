@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
@@ -11,6 +11,9 @@ import { CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { GlobalStateService } from "src/app/services/global-state.service";
+import { CommandQueueService } from "src/app/services/command-queue.service";
+import { DatabaseService } from "src/app/services/database.service";
+import { GetSystemsCommand } from "src/app/commands/get-systems.handler";
 
 @Component({
   selector: "app-shell",
@@ -107,8 +110,9 @@ import { GlobalStateService } from "src/app/services/global-state.service";
     RouterLink,
     RouterLinkActive,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ShellComponent {
+export class ShellComponent implements OnInit {
   isHandset$: Observable<boolean> = this._breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
     shareReplay()
@@ -117,8 +121,13 @@ export class ShellComponent {
   constructor(
     private readonly _breakpointObserver: BreakpointObserver,
     private readonly _authService: AuthService,
-    readonly _globalState: GlobalStateService
+    readonly _globalState: GlobalStateService,
+    private readonly _queueService: CommandQueueService,
   ) {}
+
+  ngOnInit(): void {
+    this._queueService.enqueue(new GetSystemsCommand());
+  }
 
   logout() {
     this._authService.signOut();

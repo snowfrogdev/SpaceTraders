@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ContractDto } from "src/app/dtos/contracts/contract.dto";
 import { Observable, Subject, interval, map, startWith, switchMap, takeUntil } from "rxjs";
@@ -146,6 +146,7 @@ import { AcceptContractCommand } from "src/app/commands/accept-contract.handler"
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractsComponent implements OnInit {
   myContracts$!: Observable<ContractDto[]>;
@@ -192,6 +193,7 @@ export class ContractsComponent implements OnInit {
 
   acceptContract(contract: ContractDto): void {
     const command = new AcceptContractCommand(contract.id, this._globalState.selectedAgent()!.token);
+    command.scheduledTime = new Date(0);
     this._queue.enqueue(command);
   }
 

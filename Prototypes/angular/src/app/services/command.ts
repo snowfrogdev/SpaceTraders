@@ -1,3 +1,3 @@
 export abstract class Command {
-  constructor(public readonly scheduledTime = new Date()) {}
+  constructor(public scheduledTime = new Date()) {}
 }

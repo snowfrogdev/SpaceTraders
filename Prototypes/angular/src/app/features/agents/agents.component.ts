@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RegisterNewAgentFormComponent, RegisterNewAgentFormResults } from "./register-new-agent-form.component";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
@@ -83,6 +83,7 @@ import { GlobalStateService } from "src/app/services/global-state.service";
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgentsComponent implements OnInit, OnDestroy {
   myAgentsSymbolTokenMap$!: Observable<{ symbol: string; token: string }[]>;
@@ -138,6 +139,7 @@ export class AgentsComponent implements OnInit, OnDestroy {
       .subscribe((agents) => {
         for (const { symbol } of agents) {
           const command = new GetPublicAgentCommand(symbol);
+          command.scheduledTime = new Date(0);
           this._queue.enqueue(command);
         }
       });

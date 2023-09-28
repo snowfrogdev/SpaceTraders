@@ -4,13 +4,15 @@ import { RxAgentCollection } from "./agent.schema";
 import { RxWaypointCollection } from "./waypoint.schema";
 import { RxContractCollection } from "./contracts.schema";
 import { RxSystemCollection } from "./system.schema";
+import { RxShipCollection } from "./ship.schema";
 
 export type RxCollections = {
-  user: RxUserCollection;
   agent: RxAgentCollection;
-  waypoint: RxWaypointCollection;
   contract: RxContractCollection;
+  ship: RxShipCollection;
   system: RxSystemCollection;
+  user: RxUserCollection;
+  waypoint: RxWaypointCollection;
 };
 
 export type RxSpaceTradersDatabase = RxDatabase<RxCollections>;

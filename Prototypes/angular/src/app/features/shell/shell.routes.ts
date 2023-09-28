@@ -16,6 +16,11 @@ export default [
         loadComponent: () => import("../agents/agents.component").then((module) => module.AgentsComponent),
       },
       {
+        path: "ships",
+        loadComponent: () => import("../ships/ships.component").then((module) => module.ShipsComponent),
+        canActivate: [agentSelectedGuard],
+      },
+      {
         path: "systems",
         loadComponent: () => import("../systems/systems.component").then((module) => module.SystemsComponent),
         canActivate: [agentSelectedGuard],

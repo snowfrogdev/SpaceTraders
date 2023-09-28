@@ -16,6 +16,8 @@ import { GetMyContractsHandler } from "./commands/get-my-contracts.handler";
 import { AcceptContractHandler } from "./commands/accept-contract.handler";
 import { GetSystemsHandler } from "./commands/get-systems.handler";
 import { GlobalStateService } from "./services/global-state.service";
+import { GetMyShipHandler } from "./commands/get-my-ship.handler";
+import { GetMyShipsHandler } from "./commands/get-my-ships.handler";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -48,6 +50,8 @@ export const appConfig: ApplicationConfig = {
           new GetMyContractsHandler(http, db),
           new AcceptContractHandler(http, db),
           new GetSystemsHandler(http, db, globalState, injector),
+          new GetMyShipHandler(http, db),
+          new GetMyShipsHandler(http, db, globalState, injector),
         ]);
       },
       deps: [HttpClient, AuthService, DatabaseService, GlobalStateService, Injector],

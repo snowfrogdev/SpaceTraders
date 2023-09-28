@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RegisterNewAgentFormComponent, RegisterNewAgentFormResults } from "./register-new-agent-form.component";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
@@ -9,7 +9,7 @@ import { CommandQueueService } from "../../services/command-queue.service";
 import { RegisterNewAgentCommand } from "../../commands/register-new-agent.handler";
 import { AuthService } from "../../services/auth.service";
 import { DatabaseService } from "../../services/database.service";
-import { Observable, Subject, interval, map, startWith, switchMap, takeUntil } from "rxjs";
+import { Observable, Subject, interval, map, startWith, switchMap, takeUntil, tap } from "rxjs";
 import { GetPublicAgentCommand } from "../../commands/get-public-agent.handler";
 import { AgentDto } from "../../dtos/agent.dto";
 import { WaypointLinkComponent } from "../waypoint-link/waypoint-link.component";
@@ -99,7 +99,8 @@ export class AgentsComponent implements OnInit, OnDestroy {
     private readonly _queue: CommandQueueService,
     private readonly _authService: AuthService,
     private readonly _db: DatabaseService,
-    readonly globalState: GlobalStateService
+    readonly globalState: GlobalStateService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -112,8 +113,6 @@ export class AgentsComponent implements OnInit, OnDestroy {
       map((user) => user?.agents ?? [])
     );
 
-    this.myAgentsSymbolTokenMap$.subscribe((agents) => (this.myAgentsSymbolTokenMap = agents));
-
     this.myAgents$ = this.myAgentsSymbolTokenMap$.pipe(
       switchMap((agents) => {
         const agentSymbols = agents.map((a) => a.symbol);
@@ -123,6 +122,9 @@ export class AgentsComponent implements OnInit, OnDestroy {
         return [...agentMap.values()];
       })
     );
+    this.changeDetectorRef.markForCheck();
+
+    this.myAgentsSymbolTokenMap$.subscribe((agents) => (this.myAgentsSymbolTokenMap = agents));
 
     // every 15 seconds, send a command to the server to get the latest agent data
     this.myAgentsSymbolTokenMap$

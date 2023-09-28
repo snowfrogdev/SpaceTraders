@@ -4,19 +4,19 @@ import { CommandHandler } from "../services/command-handler";
 import { environment } from "src/environments/environment";
 import { DatabaseService } from "../services/database.service";
 import { ListDto } from "../dtos/list.dto";
-import { SystemDto } from "../dtos/systems/system.dto";
 import { CommandQueueService } from "../services/command-queue.service";
 import { GlobalStateService } from "../services/global-state.service";
 import { Injector } from "@angular/core";
+import { ShipDto } from "../dtos/fleet/ship.dto";
 
-export class GetSystemsCommand extends Command {
-  constructor(readonly page: number = 1) {
+export class GetMyShipsCommand extends Command {
+  constructor(readonly agentSymbol: string, readonly agentToken: string, readonly page: number = 1) {
     super();
   }
 }
 
-export class GetSystemsHandler implements CommandHandler<GetSystemsCommand> {
-  handles = GetSystemsCommand;
+export class GetMyShipsHandler implements CommandHandler<GetMyShipsCommand> {
+  handles = GetMyShipsCommand;
   private _queue?: CommandQueueService;
 
   constructor(
@@ -26,28 +26,38 @@ export class GetSystemsHandler implements CommandHandler<GetSystemsCommand> {
     private readonly injector: Injector
   ) {}
 
-  async handle(command: GetSystemsCommand): Promise<void> {
+  async handle(command: GetMyShipsCommand): Promise<void> {
     if (!this._queue) {
       this._queue = this.injector.get(CommandQueueService);
     }
 
+    const headers = {
+      Authorization: `Bearer ${command.agentToken}`,
+    };
+
     const params = new HttpParams().set("limit", "20").set("page", command.page.toString());
 
-    this._http.get<ListDto<SystemDto>>(`${environment.apiUrl}/systems`, { params }).subscribe({
+    this._http.get<ListDto<ShipDto>>(`${environment.apiUrl}/my/ships`, { params, headers }).subscribe({
       next: async (dto) => {
-        await this._db.db.system.bulkUpsert(dto.data);
+        const data = dto.data.map((ship) => {
+          return {
+            ...ship,
+            agentSymbol: command.agentSymbol,
+          };
+        });
+        await this._db.db.ship.bulkUpsert(data);
 
-        const dbCount = await this._db.db.system.count().exec();
+        const dbCount = await this._db.db.ship.count().exec();
         if (dbCount >= dto.meta.total) {
-          this._globalState.allSystemsLoaded.set(true);
+          this._globalState.allShipsLoaded.set(true);
           return;
         }
 
-        this._queue!.enqueue(new GetSystemsCommand(command.page + 1));
+        this._queue!.enqueue(new GetMyShipsCommand(command.agentSymbol, command.agentToken, command.page + 1));
       },
       error: (error) => {
         console.error(error);
-        this._queue!.enqueue(new GetSystemsCommand(command.page));
+        this._queue!.enqueue(new GetMyShipsCommand(command.agentSymbol, command.agentToken, command.page));
       },
     });
   }

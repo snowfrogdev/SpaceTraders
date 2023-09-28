@@ -14,6 +14,7 @@ import { GlobalStateService } from "src/app/services/global-state.service";
 import { CommandQueueService } from "src/app/services/command-queue.service";
 import { DatabaseService } from "src/app/services/database.service";
 import { GetSystemsCommand } from "src/app/commands/get-systems.handler";
+import { GetMyShipsCommand } from "src/app/commands/get-my-ships.handler";
 
 @Component({
   selector: "app-shell",
@@ -30,9 +31,10 @@ import { GetSystemsCommand } from "src/app/commands/get-systems.handler";
         <mat-toolbar>Menu</mat-toolbar>
         <mat-nav-list>
           <a mat-list-item routerLink="/agents" routerLinkActive="active" ariaCurrentWhenActive="page">Agents</a>
+          <a mat-list-item routerLink="/contracts" routerLinkActive="active" ariaCurrentWhenActive="page">Contracts</a>
+          <a mat-list-item routerLink="/ships" routerLinkActive="active" ariaCurrentWhenActive="page">Ships</a>
           <a mat-list-item routerLink="/systems" routerLinkActive="active" ariaCurrentWhenActive="page">Systems</a>
           <a mat-list-item routerLink="/waypoints" routerLinkActive="active" ariaCurrentWhenActive="page">Waypoints</a>
-          <a mat-list-item routerLink="/contracts" routerLinkActive="active" ariaCurrentWhenActive="page">Contracts</a>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
@@ -48,7 +50,9 @@ import { GetSystemsCommand } from "src/app/commands/get-systems.handler";
           </button>
           <a mat-button routerLink=""><span class="mat-toolbar">SpaceTraders Manager</span></a>
           <span class="spacer"></span>
-          <span id="selected-agent" *ngIf="_globalState.selectedAgent()">{{_globalState.selectedAgent()?.symbol}}</span>
+          <span id="selected-agent" *ngIf="_globalState.selectedAgent()">{{
+            _globalState.selectedAgent()?.symbol
+          }}</span>
           <button type="button" mat-icon-button aria-label="Logout" (click)="logout()">
             <mat-icon aria-label="Logout icon">logout</mat-icon>
           </button>
@@ -122,11 +126,14 @@ export class ShellComponent implements OnInit {
     private readonly _breakpointObserver: BreakpointObserver,
     private readonly _authService: AuthService,
     readonly _globalState: GlobalStateService,
-    private readonly _queueService: CommandQueueService,
+    private readonly _queueService: CommandQueueService
   ) {}
 
   ngOnInit(): void {
     this._queueService.enqueue(new GetSystemsCommand());
+    this._queueService.enqueue(
+      new GetMyShipsCommand(this._globalState.selectedAgent()!.symbol, this._globalState.selectedAgent()!.token)
+    );
   }
 
   logout() {
